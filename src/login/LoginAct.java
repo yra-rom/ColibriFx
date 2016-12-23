@@ -16,6 +16,7 @@ public class LoginAct extends Application {
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("login/icon.png")));
         Scene scene = new Scene(root, 300, 475);
+        scene.getStylesheets().add(0, "login/login.css");
         stage.setScene(scene);
         stage.show();
     }

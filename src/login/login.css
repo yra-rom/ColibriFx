@@ -1,0 +1,44 @@
+.mainWindow {
+    -fx-background-color: #ecf4ff
+}
+
+.textEmail {
+    -fx-font-size: 20px;
+    -fx-font-style: normal;
+    -fx-display-caret: true;
+    -fx-border-width: 0;
+    -fx-alignment: center;
+    -fx-background-color: inherit;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}
+
+.textPass {
+    -fx-font-size: 20px;
+    -fx-font-style: normal;
+    -fx-display-caret: true;
+    -fx-border-width: 0;
+    -fx-alignment: center;
+    -fx-background-color: inherit;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}
+
+.btnLogin {
+    -fx-background-color: #0000ff;
+    -fx-font-size: 15px;
+    -fx-text-fill: #afeafc;
+}
+
+.btnRegister {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-border-width: 0;
+    -fx-background-color: #4169E1;
+    -fx-font-size: 15px
+}
+
+.btnLogin:hover{
+    -fx-effect: dropshadow(gaussian, #465153, 15, 0.0001, 0.05, 0.05);
+}
+
+.btnRegister:hover{
+    -fx-effect: dropshadow(gaussian, #465153, 15, 0.0001, 0.05, 0.05);
+}
