@@ -13,6 +13,7 @@ public class LoginAct extends Application {
     public void start(Stage stage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("login/login.fxml"));
         stage.setTitle("Colibri");
+        stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("login/icon.png")));
         Scene scene = new Scene(root, 300, 475);
         stage.setScene(scene);
