@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="CENTER" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="registration.RegistrationController">
+   <children>
+      <AnchorPane>
+         <children>
+            <TextField alignment="CENTER" layoutY="50.0" promptText="Nick" styleClass="text" />
+            <TextField alignment="CENTER" layoutY="90.0" promptText="Email" styleClass="text" />
+            <PasswordField alignment="CENTER" layoutY="130.0" promptText="Password" styleClass="text" />
+            <PasswordField alignment="CENTER" layoutY="170.0" promptText="Repeat password" styleClass="text" />
+            <Button alignment="CENTER" layoutX="61.0" layoutY="267.0" maxHeight="33.0" maxWidth="140.0" mnemonicParsing="false" onAction="#registerMeAction" prefHeight="25.0" prefWidth="139.0" styleClass="button" text="Register Me!" />
+         </children></AnchorPane>
+   </children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>

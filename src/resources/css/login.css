@@ -36,9 +36,9 @@
 }
 
 .btnLogin:hover{
-    -fx-effect: dropshadow(gaussian, #465153, 15, 0.0001, 0.05, 0.05);
+    -fx-effect: dropshadow(gaussian, #9ba6a8, 15, 0.0001, 0.05, 0.05);
 }
 
 .btnRegister:hover{
-    -fx-effect: dropshadow(gaussian, #465153, 15, 0.0001, 0.05, 0.05);
+    -fx-effect: dropshadow(gaussian, #9ba6a8, 15, 0.0001, 0.05, 0.05);
 }

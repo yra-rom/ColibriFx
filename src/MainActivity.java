@@ -1,5 +1,3 @@
-package login;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,16 +5,16 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class LoginAct extends Application {
+public class MainActivity extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("login/login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/registration.fxml"));
         stage.setTitle("Colibri");
         stage.setResizable(false);
-        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("login/icon.png")));
+        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/icon.png")));
         Scene scene = new Scene(root, 300, 475);
-        scene.getStylesheets().add(0, "login/login.css");
+        scene.getStylesheets().add(0, "resources/css/registration.css");
         stage.setScene(scene);
         stage.show();
     }
