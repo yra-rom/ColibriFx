@@ -42,3 +42,9 @@
 .btnRegister:hover{
     -fx-effect: dropshadow(gaussian, #9ba6a8, 15, 0.0001, 0.05, 0.05);
 }
+
+.tip{
+    -fx-background-color: rgba(255, 3, 0, 0.5);
+    -fx-text-fill: black;
+    -fx-opacity: 0.5;
+}

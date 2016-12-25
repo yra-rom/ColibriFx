@@ -20,13 +20,14 @@
    <children>
        <AnchorPane>
            <children>
-               <TextField alignment="CENTER" layoutY="33.0" prefHeight="25.0" prefWidth="255.0" promptText="E-mail" styleClass="textEmail" />
-               <PasswordField alignment="CENTER" layoutX="1.0" layoutY="79.0" prefHeight="44.0" prefWidth="255.0" promptText="Password" styleClass="textPass">
+               <TextField fx:id="tfEmail" alignment="CENTER" layoutY="33.0" onKeyTyped="#emailTextAction" prefHeight="25.0" prefWidth="255.0" promptText="E-mail" styleClass="textEmail">
+               </TextField>
+               <PasswordField fx:id="pfPass" alignment="CENTER" layoutX="1.0" layoutY="79.0" onKeyTyped="#passTextAction" prefHeight="44.0" prefWidth="255.0" promptText="Password" styleClass="textPass">
                <font>
                   <Font size="20.0" />
                </font></PasswordField>
-               <Button alignment="CENTER" contentDisplay="CENTER" layoutX="94.0" layoutY="154.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="25.0" prefWidth="69.0" styleClass="btnLogin" text="Log In" textAlignment="CENTER" />
-               <Button alignment="CENTER" contentDisplay="CENTER" layoutX="89.0" layoutY="263.0" mnemonicParsing="false" onAction="#registrationAction" prefHeight="25.0" prefWidth="79.0" styleClass="btnRegister" text="Register" textAlignment="CENTER" />
+               <Button fx:id="btnLogin" alignment="CENTER" contentDisplay="CENTER" layoutX="94.0" layoutY="154.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="25.0" prefWidth="69.0" styleClass="btnLogin" text="Log In" textAlignment="CENTER" />
+               <Button fx:id="btnReg" alignment="CENTER" contentDisplay="CENTER" layoutX="89.0" layoutY="263.0" mnemonicParsing="false" onAction="#registrationAction" prefHeight="25.0" prefWidth="79.0" styleClass="btnRegister" text="Register" textAlignment="CENTER" />
            </children>
          <effect>
             <DisplacementMap>
@@ -52,5 +53,4 @@
          </mapData>
       </DisplacementMap>
    </effect>
-
 </GridPane>
