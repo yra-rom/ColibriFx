@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER" onMouseDragged="#backToLogin" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="registration.RegistrationController">
+<GridPane alignment="CENTER" onMouseDragged="#backToLogin" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.registration.RegistrationController">
    <children>
       <AnchorPane>
          <children>

@@ -1,0 +1,30 @@
+.mainWindow {
+    -fx-background-color: #ecf4ff;
+    -fx-padding: 25;
+    -fx-font-size: 20;
+}
+
+.listView {
+    -fx-background-color: #ecf4ff;
+}
+
+.textNickNotEditable {
+    -fx-font-size: 14px;
+    -fx-font-style: normal;
+    -fx-display-caret: true;
+    -fx-border-width: 0;
+    -fx-alignment: center;
+    -fx-background-color: inherit;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}
+
+.textNickEditable{
+    -fx-font-size: 14px;
+    -fx-font-style: normal;
+    -fx-display-caret: true;
+    -fx-border-width: 2;
+    -fx-alignment: center;
+    -fx-border-color: black;
+    -fx-background-color: #ecf4ff;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}

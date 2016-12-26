@@ -1,5 +1,7 @@
-package login;
+package gui.login;
 
+import client.Client;
+import client.ClientThread;
 import constants.Authentication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,7 +18,7 @@ import java.io.IOException;
 
 public class LoginController {
     @FXML
-    private TextField tfEmail;
+    private TextField tfEmailLogin;
     @FXML
     private TextField pfPass;
 
@@ -26,8 +28,8 @@ public class LoginController {
 
     private ClientThread thread = ClientThread.getInstance();
 
-    public void loginAction(ActionEvent actionEvent) {
-        String email = tfEmail.getText();
+    public void loginAction(ActionEvent actionEvent) throws IOException {
+        String email = tfEmailLogin.getText();
         String pass = pfPass.getText();
         Client client = new Client.ClientBuilder().email(email).pass(pass).build();
         String status = thread.authentication(client);
@@ -37,8 +39,8 @@ public class LoginController {
                 tipEmail = new Tooltip();
                 tipEmail.setText("Wrong Email");
                 tipEmail.setStyle(tipStyle);
-                Tooltip.install(tfEmail, tipEmail);
-                tfEmail.setStyle("-fx-text-fill: red");
+                Tooltip.install(tfEmailLogin, tipEmail);
+                tfEmailLogin.setStyle("-fx-text-fill: red");
                 break;
             }
             case Authentication.WRONG_PASSWORD: {
@@ -54,7 +56,11 @@ public class LoginController {
                 break;
             }
             case Authentication.SUCCESS:
-
+                Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/contacts.fxml"));
+                Scene scene = new Scene(root, 300, 475);
+                scene.getStylesheets().add("resources/css/contacts.css");
+                Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+                stage.setScene(scene);
                 break;
         }
     }
@@ -68,9 +74,9 @@ public class LoginController {
     }
 
     public void emailTextAction(KeyEvent keyEvent) {
-        tfEmail.setStyle("-fx-text-fill: black");
+        tfEmailLogin.setStyle("-fx-text-fill: black");
         if(tipEmail != null){
-            Tooltip.uninstall(tfEmail, tipEmail);
+            Tooltip.uninstall(tfEmailLogin, tipEmail);
         }
     }
 

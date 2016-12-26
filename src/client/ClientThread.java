@@ -1,4 +1,4 @@
-package login;
+package client;
 
 import constants.SendKeys;
 import logger.Log;
@@ -8,10 +8,14 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Singleton
+ */
 public class ClientThread extends Thread {
     private static final String HOST = "localhost";
     private static final int PORT = 5678;
     private final String TAG = this.getClass().getSimpleName();
+
     private Queue<HashMap<String, String>> outcome = new ConcurrentLinkedQueue<>();
     private List<HashMap<String, String>> income  = Collections.synchronizedList(new ArrayList<HashMap<String, String>>());
 
@@ -21,7 +25,6 @@ public class ClientThread extends Thread {
     public static ClientThread getInstance() {
         return instance;
     }
-
     private ClientThread() {
         start();
     }
@@ -30,14 +33,20 @@ public class ClientThread extends Thread {
     public void run() {
         try {
             initSocket();
-            initStreams();
 
             write();
             read();
-
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            close();
         }
+    }
+
+    private void initSocket() throws IOException {
+        Log.d(TAG, "Clinet about to connect...");
+        socket = new Socket(HOST, PORT);
+        Log.d(TAG, "Clinet connected.");
     }
 
     private void write() {
@@ -79,7 +88,15 @@ public class ClientThread extends Thread {
         }).start();
     }
 
-    private void initStreams() throws IOException {
+    private void close(){
+        try {
+            if(socket != null) {
+                socket.close();
+            }
+            this.interrupt();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String authentication(Client client){
@@ -137,10 +154,10 @@ public class ClientThread extends Thread {
         return map;
     }
 
-
-    private void initSocket() throws IOException {
-        Log.d(TAG, "Clinet about to connect...");
-        socket = new Socket(HOST, PORT);
-        Log.d(TAG, "Clinet connected.");
+    public void sendNewNick(String nick) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(SendKeys.TITLE, SendKeys.NEWNICK);
+        map.put(SendKeys.NICK, nick);
+        outcome.add(map);
     }
 }

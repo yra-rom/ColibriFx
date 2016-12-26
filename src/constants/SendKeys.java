@@ -5,13 +5,14 @@ public interface SendKeys {
     String TITLE = "TITLE";
     String REGISTER = "REGISTER";
 
-    //For login
+    //For gui.login
     String AUTHENTICATION = "AUTHENTICATION";
     String AUTHENTICATION_ANSWER = "AUTHENTICATION_ANSWER";
     String NICK = "NICK";
     String PASS = "PASS";
 
-    //For registration
+    //For gui.registration
     String REGISTRATION_ANSWER = "REGISTRATION_ANSWER";
     String EMAIL = "EMAIL";
+    String NEWNICK = "NEWNICK";
 }
