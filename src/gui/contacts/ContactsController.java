@@ -48,11 +48,11 @@ public class ContactsController {
             String nick = tfText.getText();
             if(nick.equals("")){
                 tfText.setText(oldNick);
+                tfText.setStyle(textNickNotEditable);
+                tfText.setEditable(false);
                 return;
             }
-            
-            tfText.setStyle(textNickNotEditable);
-            tfText.setEditable(false);
+
             if(!oldNick.equals(nick)){
                 sendNewNick(nick);
             }
