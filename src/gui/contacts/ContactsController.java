@@ -21,14 +21,18 @@ public class ContactsController implements Controller {
             "    -fx-background-color: inherit;\n" +
             "    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);";
 
-    private String textNickEditable = "-fx-font-size: 14px;\n" +
-            "    -fx-font-style: normal;\n" +
-            "    -fx-display-caret: true;\n" +
-            "    -fx-border-width: 2;\n" +
-            "    -fx-alignment: center;\n" +
-            "    -fx-border-color: #a6adae;\n" +
-            "    -fx-background-color: #ecf4ff;\n" +
-            "    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);";
+    private String textNickEditable =
+            "   -fx-font-size: 14px;\n" +
+            "   -fx-font-style: normal;\n" +
+            "   -fx-display-caret: true;\n" +
+            "   -fx-border-width: 0.7;\n" +
+            "   -fx-alignment: center;\n" +
+            "   -fx-border-color: #a6adae;\n" +
+            "   -fx-background-color: #ecf4ff;\n" +
+            "   -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);" +
+            "   -fx-border-insets: 0.5;" +
+            "  -fx-border-radius: 20 20 20 20;\n" +
+            "  -fx-background-radius: 20 20 20 20;";
 
     private ClientThread thread = ClientThread.getInstance();
 
@@ -44,9 +48,10 @@ public class ContactsController implements Controller {
     @FXML
     public void initialize() {
         thread.setController(this);
-        oldNick = tfNick.getText();
-        //tfNick.setText(ClientThread.getInstance().getClient().getNick());
-        tfNick.setText("SomeNick");
+        String nick = ClientThread.getInstance().getClient().getNick();
+        tfNick.setText(nick);
+        oldNick = nick;
+        //tfNick.setText("SomeNick");
         tfNick.setStyle(textNickNotEditable);
         deselectTf();
 
@@ -87,7 +92,7 @@ public class ContactsController implements Controller {
 
     private void sendNewNick(String nick) {
         System.out.println("Sending new nick " + nick);
-        //thread.sendNewNick(nick);
+        thread.sendNewNick(nick);
     }
 
     public void onNickKeyPress(KeyEvent keyEvent) {

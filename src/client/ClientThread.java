@@ -144,6 +144,9 @@ public class ClientThread extends Thread {
         Log.d(TAG, "Authentication status: " + status);
 
         if(Authentication.SUCCESS.equals(status)){
+            String nick = map.get(SendKeys.NICK);
+            client.setNick(nick);
+            client.setConfirmed(true);
             this.client = client;
         }
 

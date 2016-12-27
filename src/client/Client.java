@@ -33,6 +33,10 @@ public final class Client {
         this.confirmed = confirmed;
     }
 
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
     public static class ClientBuilder {
 
         private String nick;

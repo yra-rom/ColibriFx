@@ -10,13 +10,13 @@
             prefHeight="475.0" prefWidth="300.0" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.contacts.ContactsController">
     <children>
-        <TextField fx:id="tfNick" alignment="CENTER" editable="false" layoutX="73.0" layoutY="2.0"
+        <TextField fx:id="tfNick" alignment="CENTER" editable="false" layoutX="63" layoutY="2.0"
                    onKeyPressed="#onNickKeyPress" onMouseClicked="#onNickClick" promptText="Your Nick"
                    styleClass="textNickNotEditable"/>
         <ListView fx:id="listView" layoutY="52.0" prefHeight="412.0" prefWidth="309.0" styleClass="listView"/>
         <Button alignment="CENTER" layoutX="117.0" layoutY="449.0" mnemonicParsing="false" onAction="#onButtonAction"
                 text="New Item"/>
-        <Line endX="170.0" layoutX="115.0" layoutY="39.0" startX="-100.0" styleClass="line"/>
+        <Line endX="170.0" layoutX="110.0" layoutY="39.0" startX="-100.0" styleClass="line"/>
     </children>
     <cursor>
         <Cursor fx:constant="DISAPPEAR"/>
