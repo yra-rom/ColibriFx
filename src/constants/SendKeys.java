@@ -15,4 +15,6 @@ public interface SendKeys {
     String REGISTRATION_ANSWER = "REGISTRATION_ANSWER";
     String EMAIL = "EMAIL";
     String NEWNICK = "NEWNICK";
+
+    String GET_FRIENDS = "GET_FRIENDS";
 }

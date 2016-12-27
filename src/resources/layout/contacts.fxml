@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.VBox?>
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.contacts.ContactsController">
-   <children>
-      <TextField fx:id="tfText" editable="false" onKeyPressed="#onNickKeyPress" onMouseClicked="#onNickClick" promptText="Your Nick" styleClass="textNickNotEditable" text="Your Nick" />
-   </children>
-</VBox>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<AnchorPane maxHeight="475.0" maxWidth="300.0" minHeight="475.0" minWidth="300.0" nodeOrientation="LEFT_TO_RIGHT"
+            prefHeight="475.0" prefWidth="300.0" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.contacts.ContactsController">
+    <children>
+        <TextField fx:id="tfNick" alignment="CENTER" editable="false" layoutX="73.0" layoutY="2.0"
+                   onKeyPressed="#onNickKeyPress" onMouseClicked="#onNickClick" promptText="Your Nick"
+                   styleClass="textNickNotEditable"/>
+        <ListView fx:id="listView" layoutY="52.0" prefHeight="412.0" prefWidth="309.0" styleClass="listView"/>
+        <Button alignment="CENTER" layoutX="117.0" layoutY="449.0" mnemonicParsing="false" onAction="#onButtonAction"
+                text="New Item"/>
+        <Line endX="170.0" layoutX="115.0" layoutY="39.0" startX="-100.0" styleClass="line"/>
+    </children>
+    <cursor>
+        <Cursor fx:constant="DISAPPEAR"/>
+    </cursor>
+</AnchorPane>

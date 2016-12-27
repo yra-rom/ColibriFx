@@ -17,7 +17,7 @@
     -fx-font-style: normal;
     -fx-display-caret: true;
     -fx-border-width: 0;
-    -fx-alignment: center;
+
     -fx-background-color: inherit;
     -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
 }

@@ -1,32 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-
-<GridPane alignment="CENTER" onMouseDragged="#backToLogin" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.registration.RegistrationController">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<GridPane alignment="CENTER" onMouseDragged="#backToLogin" styleClass="mainWindow"
+          xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="gui.registration.RegistrationController">
    <children>
-      <AnchorPane>
+       <AnchorPane>
          <children>
-            <TextField fx:id="tfNick" alignment="CENTER" layoutY="50.0" promptText="Nick" styleClass="text" />
-            <TextField fx:id="tfEmail" alignment="CENTER" layoutY="90.0" onKeyTyped="#emailTextAction" promptText="Email" styleClass="text" />
-            <PasswordField fx:id="pfPass" alignment="CENTER" layoutY="130.0" onKeyTyped="#passAction" promptText="Password" styleClass="text" />
-            <PasswordField fx:id="pfPassRepeat" alignment="CENTER" layoutY="170.0" onKeyTyped="#passRepeatAction" promptText="Repeat password" styleClass="text" />
-            <Button alignment="CENTER" layoutX="61.0" layoutY="267.0" maxHeight="33.0" maxWidth="140.0" mnemonicParsing="false" onAction="#registerMeAction" prefHeight="25.0" prefWidth="139.0" styleClass="button" text="Register Me!" />
+             <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="70.0" layoutY="4.0" pickOnBounds="true"
+                        preserveRatio="true">
+                 <image>
+                     <Image url="@../images/RegisterIcon.png"/>
+                 </image>
+             </ImageView>
+
+             <JFXTextField fx:id="tfNick" labelFloat="true" alignment="CENTER" layoutY="180.0" layoutX="10.0"
+                           prefWidth="255.0" promptText="Nick">
+                 <VBox.margin>
+                     <Insets bottom="20.0"/>
+                 </VBox.margin>
+                 <font>
+                     <Font size="15.0"/>
+                 </font>
+             </JFXTextField>
+
+             <JFXTextField fx:id="tfEmail" labelFloat="true" alignment="CENTER" layoutY="230.0" layoutX="10.0"
+                           prefWidth="255.0"
+                           onKeyTyped="#emailTextAction" promptText="Email">
+                 <VBox.margin>
+                     <Insets bottom="20.0"/>
+                 </VBox.margin>
+                 <font>
+                     <Font size="15.0"/>
+                 </font>
+             </JFXTextField>
+
+             <JFXPasswordField fx:id="pfPass" labelFloat="true" alignment="CENTER" layoutY="280.0" layoutX="10.0"
+                               prefWidth="255.0"
+                               onKeyTyped="#passAction" promptText="Password">
+                 <VBox.margin>
+                     <Insets bottom="20.0"/>
+                 </VBox.margin>
+                 <font>
+                     <Font size="15.0"/>
+                 </font>
+             </JFXPasswordField>
+
+             <JFXPasswordField fx:id="pfPassRepeat" labelFloat="true" alignment="CENTER" layoutY="330.0" layoutX="10.0"
+                               prefWidth="255.0"
+                               onKeyTyped="#passRepeatAction" promptText="Repeat password">
+                 <VBox.margin>
+                     <Insets bottom="20.0"/>
+                 </VBox.margin>
+                 <font>
+                     <Font size="15.0"/>
+                 </font>
+             </JFXPasswordField>
+
+             <Button layoutX="70.0" layoutY="425.0" maxHeight="15.0" maxWidth="140.0" mnemonicParsing="false"
+                     onAction="#registerMeAction" prefHeight="25.0" prefWidth="139.0" styleClass="button"
+                     text="Register Me!"/>
          </children></AnchorPane>
    </children>
-   <columnConstraints>
-      <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-   </rowConstraints>
 </GridPane>

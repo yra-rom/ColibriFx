@@ -2,7 +2,9 @@ package gui.login;
 
 import client.Client;
 import client.ClientThread;
+import constants.Activity;
 import constants.Authentication;
+import gui.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class LoginController {
+public class LoginController implements Controller {
     @FXML
     private TextField tfEmailLogin;
     @FXML
@@ -26,7 +28,7 @@ public class LoginController {
     private Tooltip tipPass;
     private String tipStyle = "-fx-background-color: rgba(255, 3, 0, 0.5); -fx-text-fill: black;-fx-opacity: 0.5";
 
-    private ClientThread thread = ClientThread.getInstance();
+    private static ClientThread thread = ClientThread.getInstance();
 
     public void loginAction(ActionEvent actionEvent) throws IOException {
         String email = tfEmailLogin.getText();
@@ -57,7 +59,7 @@ public class LoginController {
             }
             case Authentication.SUCCESS:
                 Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/contacts.fxml"));
-                Scene scene = new Scene(root, 300, 475);
+                Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
                 scene.getStylesheets().add("resources/css/contacts.css");
                 Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
                 stage.setScene(scene);
@@ -67,7 +69,7 @@ public class LoginController {
 
     public void registrationAction(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/registration.fxml"));
-        Scene scene = new Scene(root, 300, 475);
+        Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
         scene.getStylesheets().add("resources/css/registration.css");
         Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
@@ -85,5 +87,10 @@ public class LoginController {
         if(tipPass != null){
             Tooltip.uninstall(pfPass, tipPass);
         }
+    }
+
+    @FXML
+    public void initialize() {
+        thread.setController(this);
     }
 }

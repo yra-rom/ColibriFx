@@ -2,16 +2,16 @@
     -fx-background-color: #ecf4ff
 }
 
-.text{
-    -fx-text-alignment: center;
-    -fx-font-size: 20px;
-    -fx-font-style: normal;
-    -fx-display-caret: true;
-    -fx-border-width: 0;
-    -fx-alignment: center;
-    -fx-background-color: inherit;
-    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-}
+/*.text{*/
+    /*-fx-text-alignment: center;*/
+    /*-fx-font-size: 20px;*/
+    /*-fx-font-style: normal;*/
+    /*-fx-display-caret: true;*/
+    /*-fx-border-width: 0;*/
+    /*-fx-alignment: center;*/
+    /*-fx-background-color: inherit;*/
+    /*-fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);*/
+/*}*/
 
 .button{
     -fx-text-fill: rgba(255, 255, 255, 0.8);

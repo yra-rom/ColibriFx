@@ -1,9 +1,13 @@
 package client;
 
+import constants.Authentication;
 import constants.SendKeys;
+import gui.Controller;
 import logger.Log;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -15,6 +19,8 @@ public class ClientThread extends Thread {
     private static final String HOST = "localhost";
     private static final int PORT = 5678;
     private final String TAG = this.getClass().getSimpleName();
+    private static Controller controller;
+    private Client client;
 
     private Queue<HashMap<String, String>> outcome = new ConcurrentLinkedQueue<>();
     private List<HashMap<String, String>> income  = Collections.synchronizedList(new ArrayList<HashMap<String, String>>());
@@ -36,6 +42,8 @@ public class ClientThread extends Thread {
 
             write();
             read();
+            while (!isInterrupted() && socket.isConnected()) {
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
@@ -51,8 +59,9 @@ public class ClientThread extends Thread {
 
     private void write() {
         new Thread(() -> {
+            ObjectOutputStream objectOutput = null;
             try {
-                ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
+                objectOutput = new ObjectOutputStream(socket.getOutputStream());
                 while ( !ClientThread.this.isInterrupted() && socket.isConnected()) {
                     while (outcome.isEmpty()){
                         Thread.yield();
@@ -64,22 +73,39 @@ public class ClientThread extends Thread {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                if (objectOutput != null) {
+                    try {
+                        objectOutput.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }).start();
     }
 
     private void read() {
         new Thread(() -> {
+            ObjectInputStream objectInput = null;
             try {
-                ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
-                while (!ClientThread.this.isInterrupted() && socket.isConnected()) {
-                    try {
+                objectInput = new ObjectInputStream(socket.getInputStream());
+                try {
+                    while (!ClientThread.this.isInterrupted() && socket.isConnected()) {
                         Object o = objectInput.readObject();
                         if (o instanceof HashMap) {
                             income.add((HashMap<String, String>) o);
                         }
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (objectInput != null) {
+                        try {
+                            objectInput.close();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -88,12 +114,12 @@ public class ClientThread extends Thread {
         }).start();
     }
 
-    private void close(){
+    public void close() {
         try {
+            this.interrupt();
             if(socket != null) {
                 socket.close();
             }
-            this.interrupt();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,12 +143,16 @@ public class ClientThread extends Thread {
 
         Log.d(TAG, "Authentication status: " + status);
 
+        if(Authentication.SUCCESS.equals(status)){
+            this.client = client;
+        }
+
         return status;
     }
 
     public String registration(Client client) {
         String email = client.getEmail();
-        String nick = client.getPass();
+        String nick = client.getNick();
         String pass = client.getPass();
         String status = "";
 
@@ -143,10 +173,29 @@ public class ClientThread extends Thread {
     private HashMap<String, String> findMapByTitle(String key){
         HashMap<String,String> map = null;
         while (map == null){
-            for (HashMap<String, String> mapIn : income) {
+//            for (HashMap<String, String> mapIn : income) {
+//                if (mapIn.get(SendKeys.TITLE).equals(key)) {
+//                    map = mapIn;
+//                    income.remove(mapIn);
+//                    break;
+//                }
+//            }
+
+//            for (Iterator<HashMap<String, String>> it = income.iterator(); it.hasNext(); ) {
+//                HashMap<String, String> mapIn = it.next();
+//                if (mapIn.get(SendKeys.TITLE).equals(key)) {
+//                    map = mapIn;
+//                    it.remove();
+//                    break;
+//                }
+//            }
+
+            Iterator<HashMap<String, String>> iterator = income.iterator();
+            while(iterator.hasNext()) {
+                HashMap<String, String> mapIn = iterator.next();
                 if (mapIn.get(SendKeys.TITLE).equals(key)) {
                     map = mapIn;
-                    income.remove(mapIn);
+                    iterator.remove();
                     break;
                 }
             }
@@ -157,7 +206,22 @@ public class ClientThread extends Thread {
     public void sendNewNick(String nick) {
         HashMap<String, String> map = new HashMap<>();
         map.put(SendKeys.TITLE, SendKeys.NEWNICK);
-        map.put(SendKeys.NICK, nick);
+        map.put(SendKeys.NEWNICK, nick);
+        map.put(SendKeys.EMAIL, client.getEmail());
         outcome.add(map);
+    }
+
+    public static void setController(Controller c) {
+        controller = c;
+    }
+
+    public void askForFriends() {
+        HashMap<String, String> mapOut = new HashMap<>();
+        mapOut.put(SendKeys.TITLE, SendKeys.GET_FRIENDS);
+
+    }
+
+    public Client getClient() {
+        return client;
     }
 }
