@@ -1,5 +1,6 @@
 package gui.contacts;
 
+import client.Client;
 import client.ClientThread;
 import gui.Controller;
 import javafx.application.Platform;
@@ -11,6 +12,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
+import java.util.ArrayList;
 
 public class ContactsController implements Controller {
     private String textNickNotEditable = "-fx-font-size: 14px;\n" +
@@ -51,7 +54,6 @@ public class ContactsController implements Controller {
         String nick = ClientThread.getInstance().getClient().getNick();
         tfNick.setText(nick);
         oldNick = nick;
-        //tfNick.setText("SomeNick");
         tfNick.setStyle(textNickNotEditable);
         deselectTf();
 
@@ -60,6 +62,12 @@ public class ContactsController implements Controller {
         addListListeners();
 
         thread.askForFriends();
+    }
+
+    public void addFriends(ArrayList<Client> clients){
+        ArrayList<String> clientsStr = new ArrayList<>();
+        clients.forEach(c -> clientsStr.add(c.getNick()));
+        data.setAll(clientsStr);
     }
 
     private void deselectTf() {

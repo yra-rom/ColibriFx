@@ -1,6 +1,8 @@
 package client;
 
-public final class Client {
+import java.io.Serializable;
+
+public final class Client implements Serializable {
     private String nick;
     private String email;
     private String pass;

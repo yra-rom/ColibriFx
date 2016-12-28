@@ -2,7 +2,9 @@ package client;
 
 import constants.Authentication;
 import constants.SendKeys;
+import constants.ServerInfo;
 import gui.Controller;
+import gui.contacts.ContactsController;
 import logger.Log;
 
 import java.io.IOException;
@@ -16,14 +18,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Singleton
  */
 public class ClientThread extends Thread {
-    private static final String HOST = "localhost";
-    private static final int PORT = 5678;
+    private static final String HOST = ServerInfo.HOST;
+    private static final int PORT = ServerInfo.PORT;
     private final String TAG = this.getClass().getSimpleName();
     private static Controller controller;
     private Client client;
 
-    private Queue<HashMap<String, String>> outcome = new ConcurrentLinkedQueue<>();
-    private List<HashMap<String, String>> income  = Collections.synchronizedList(new ArrayList<HashMap<String, String>>());
+    private Queue<Object> outcome = new ConcurrentLinkedQueue<>();
+    private List<Object> income  = Collections.synchronizedList(new ArrayList<Object>());
 
     private Socket socket;
 
@@ -42,8 +44,7 @@ public class ClientThread extends Thread {
 
             write();
             read();
-            while (!isInterrupted() && socket.isConnected()) {
-            }
+            while (!isInterrupted() && socket.isConnected());
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
@@ -94,7 +95,7 @@ public class ClientThread extends Thread {
                     while (!ClientThread.this.isInterrupted() && socket.isConnected()) {
                         Object o = objectInput.readObject();
                         if (o instanceof HashMap) {
-                            income.add((HashMap<String, String>) o);
+                            income.add(o);
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {
@@ -137,14 +138,14 @@ public class ClientThread extends Thread {
 
         String status = "";
 
-        HashMap<String, String> map = findMapByTitle(SendKeys.AUTHENTICATION_ANSWER);
+        HashMap<String, Object> map = findMapByTitle(SendKeys.AUTHENTICATION_ANSWER);
 
-        status = map.get(SendKeys.AUTHENTICATION_ANSWER);
+        status = (String) map.get(SendKeys.AUTHENTICATION_ANSWER);
 
         Log.d(TAG, "Authentication status: " + status);
 
         if(Authentication.SUCCESS.equals(status)){
-            String nick = map.get(SendKeys.NICK);
+            String nick = (String) map.get(SendKeys.NICK);
             client.setNick(nick);
             client.setConfirmed(true);
             this.client = client;
@@ -167,14 +168,14 @@ public class ClientThread extends Thread {
 
         outcome.add(mapOut);
 
-        HashMap<String, String> mapIn = findMapByTitle(SendKeys.REGISTRATION_ANSWER);
-        status = mapIn.get(SendKeys.REGISTRATION_ANSWER);
+        HashMap<String, Object> mapIn = findMapByTitle(SendKeys.REGISTRATION_ANSWER);
+        status = (String) mapIn.get(SendKeys.REGISTRATION_ANSWER);
 
         return status;
     }
 
-    private HashMap<String, String> findMapByTitle(String key){
-        HashMap<String,String> map = null;
+    private HashMap<String, Object> findMapByTitle(String key){
+        HashMap<String, Object> map = null;
         while (map == null){
 //            for (HashMap<String, String> mapIn : income) {
 //                if (mapIn.get(SendKeys.TITLE).equals(key)) {
@@ -193,13 +194,16 @@ public class ClientThread extends Thread {
 //                }
 //            }
 
-            Iterator<HashMap<String, String>> iterator = income.iterator();
+            Iterator<Object> iterator = income.iterator();
             while(iterator.hasNext()) {
-                HashMap<String, String> mapIn = iterator.next();
-                if (mapIn.get(SendKeys.TITLE).equals(key)) {
-                    map = mapIn;
-                    iterator.remove();
-                    break;
+                Object o = iterator.next();
+                if(o instanceof HashMap) {
+                    HashMap<String, Object> mapIn = (HashMap<String, Object>) o;
+                    if (mapIn.get(SendKeys.TITLE).equals(key)) {
+                        map = mapIn;
+                        iterator.remove();
+                        break;
+                    }
                 }
             }
         }
@@ -219,9 +223,21 @@ public class ClientThread extends Thread {
     }
 
     public void askForFriends() {
+        if(controller == null || ! (controller instanceof ContactsController)){
+            return;
+        }
         HashMap<String, String> mapOut = new HashMap<>();
         mapOut.put(SendKeys.TITLE, SendKeys.GET_FRIENDS);
 
+        outcome.add(mapOut);
+
+        HashMap<String, Object> mapIn = findMapByTitle(SendKeys.FRIENDS_ANSWER);
+
+        ArrayList<Client> clients = (ArrayList<Client>) mapIn.get(SendKeys.FRIENDS_ANSWER);
+
+        if(controller != null && controller instanceof ContactsController){
+            ((ContactsController) controller).addFriends(clients);
+        }
     }
 
     public Client getClient() {

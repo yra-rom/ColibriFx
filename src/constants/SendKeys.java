@@ -17,4 +17,6 @@ public interface SendKeys {
     String NEWNICK = "NEWNICK";
 
     String GET_FRIENDS = "GET_FRIENDS";
+    String FRIENDS_ANSWER = "FRIENDS_ANSWER";
+
 }

@@ -1,5 +1,6 @@
 package constants;
 
 public interface ServerInfo {
-    int MAIN_PORT = 5678;
+    String HOST = "localhost";
+    int PORT = 5678;
 }
