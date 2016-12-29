@@ -64,4 +64,9 @@ public final class Client implements Serializable {
             return new Client(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return nick;
+    }
 }

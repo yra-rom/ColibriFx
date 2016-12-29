@@ -44,9 +44,13 @@ public class ContactsController implements Controller {
 
     private String oldNick;
 
-    @FXML
-    private ListView<String> listView;
-    private ObservableList<String> data;
+//    @FXML
+//    private ListView<String> listView;
+//    private ObservableList<String> data;
+
+   @FXML
+    private ListView<Client> listView;
+    private ObservableList<Client> data;
 
     @FXML
     public void initialize() {
@@ -65,9 +69,11 @@ public class ContactsController implements Controller {
     }
 
     public void addFriends(ArrayList<Client> clients){
-        ArrayList<String> clientsStr = new ArrayList<>();
-        clients.forEach(c -> clientsStr.add(c.getNick()));
-        data.setAll(clientsStr);
+//        ArrayList<String> clientsStr = new ArrayList<>();
+//        clients.forEach(c -> clientsStr.add(c.getNick()));
+//        data.setAll(clientsStr);
+
+        data.setAll(clients);
     }
 
     private void deselectTf() {
@@ -119,13 +125,13 @@ public class ContactsController implements Controller {
         }
     }
 
-    private void openChat(String s) {
-        System.out.println("Opening chat " + s);
+    private void openChat(Client client) {
+        System.out.println("Opening chat " + client.getEmail());
     }
 
     private static short count = 0;
 
     public void onButtonAction(ActionEvent actionEvent) {
-        data.add("New item " + count++);
+        //data.add("New item " + count++);
     }
 }
