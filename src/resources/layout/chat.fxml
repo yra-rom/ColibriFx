@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<AnchorPane minHeight="525" minWidth="300" onMouseClicked="#anchorClick" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.chat.ChatController">
+    <children>
+        <Label layoutX="20.0" layoutY="16.0" text="Label" />
+        <ImageView fx:id="ivCall" fitHeight="30.0" fitWidth="30.0" layoutX="203.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+            <image >
+                <Image url="@../images/call.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="ivVideo" fitHeight="30.0" fitWidth="30.0" layoutX="250.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/video.png" />
+            </image>
+        </ImageView>
+        <Line endX="177.0" layoutX="110.0" layoutY="50.0" startX="-100.0" styleClass="line" />
+      <ImageView fx:id="ivFile" fitHeight="30.0" fitWidth="28.0" layoutX="6.0" layoutY="445.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/file.png" />
+         </image>
+      </ImageView>
+      <Line endX="177.0" layoutX="110.0" layoutY="426.0" startX="-100.0" styleClass="line" />
+    </children>
+</AnchorPane>

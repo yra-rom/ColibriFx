@@ -16,7 +16,8 @@ import javafx.scene.input.KeyEvent;
 import java.util.ArrayList;
 
 public class ContactsController implements Controller {
-    private String textNickNotEditable = "-fx-font-size: 14px;\n" +
+    private String textNickNotEditable =
+            "    -fx-font-size: 14px;\n" +
             "    -fx-font-style: normal;\n" +
             "    -fx-display-caret: true;\n" +
             "    -fx-border-width: 0;\n" +
@@ -25,17 +26,17 @@ public class ContactsController implements Controller {
             "    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);";
 
     private String textNickEditable =
-            "   -fx-font-size: 14px;\n" +
-            "   -fx-font-style: normal;\n" +
-            "   -fx-display-caret: true;\n" +
-            "   -fx-border-width: 0.7;\n" +
-            "   -fx-alignment: center;\n" +
-            "   -fx-border-color: #a6adae;\n" +
-            "   -fx-background-color: #ecf4ff;\n" +
-            "   -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);" +
-            "   -fx-border-insets: 0.5;" +
-            "  -fx-border-radius: 20 20 20 20;\n" +
-            "  -fx-background-radius: 20 20 20 20;";
+            "    -fx-font-size: 14px;\n" +
+            "    -fx-font-style: normal;\n" +
+            "    -fx-display-caret: true;\n" +
+            "    -fx-border-width: 0.7;\n" +
+            "    -fx-alignment: center;\n" +
+            "    -fx-border-color: #a6adae;\n" +
+            "    -fx-background-color: #ecf4ff;\n" +
+            "    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);" +
+            "    -fx-border-insets: 0.5;" +
+            "   -fx-border-radius: 20 20 20 20;\n" +
+            "   -fx-background-radius: 20 20 20 20;";
 
     private ClientThread thread = ClientThread.getInstance();
 
@@ -44,11 +45,7 @@ public class ContactsController implements Controller {
 
     private String oldNick;
 
-//    @FXML
-//    private ListView<String> listView;
-//    private ObservableList<String> data;
-
-   @FXML
+    @FXML
     private ListView<Client> listView;
     private ObservableList<Client> data;
 

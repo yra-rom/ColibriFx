@@ -1,0 +1,19 @@
+.mainWindow {
+    -fx-background-color: #ecf4ff;
+}
+
+.taMessage{
+    -fx-background-color: #ecf4ff;
+}
+
+.line{
+    -fx-stroke: #0093ff;
+}
+
+.taMessage .content {
+    /*-fx-background-color: #ecf4ff ;*/
+}
+
+.image :hover{
+    -fx-effect: dropshadow(gaussian, #9ba6a8, 15, 0.0001, 0.05, 0.05);
+}
