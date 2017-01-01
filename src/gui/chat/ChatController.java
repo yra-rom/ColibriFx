@@ -7,17 +7,17 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 public class ChatController implements Controller {
-    public static final String STYLE_ON_HOVER = "-fx-effect: dropshadow(gaussian, #9ba6a8, 15, 0.0001, 0.05, 0.05);";
     //private ClientThread thread = ClientThread.getInstance();
 
-//    @FXML
-//    private TextArea taMessage;
+    @FXML
+    private TextArea taMessage;
 
     @FXML
     private Label lNick;
@@ -36,6 +36,7 @@ public class ChatController implements Controller {
     public void initialize() {
         lNick.setText("Friend's Nick");
         initTA();
+        ivSend.disableProperty();
         initImageListeners();
         //thread.setController(this);
     }
@@ -74,24 +75,11 @@ public class ChatController implements Controller {
 
             });
         }
-
-
-//        ivCall.setOnMouseEntered(t -> ivCall.setStyle(STYLE_ON_HOVER));
-//        ivCall.setOnMouseExited(t -> ivCall.setStyle(""));
-//
-//        ivVideo.setOnMouseEntered(t -> ivVideo.setStyle(STYLE_ON_HOVER));
-//        ivVideo.setOnMouseExited(t -> ivVideo.setStyle(""));
-//
-//        ivFile.setOnMouseEntered(t -> ivFile.setStyle(STYLE_ON_HOVER));
-//        ivFile.setOnMouseExited(t -> ivFile.setStyle(""));
-//
-//        ivSend.setOnMouseEntered(t -> ivSend.setStyle(STYLE_ON_HOVER));
-//        ivSend.setOnMouseExited(t -> ivSend.setStyle(""));
     }
 
     private void initTA() {
-        //taMessage.setPrefSize(200, 40);
-        //taMessage.setWrapText(true);
+        //taMessage.setPrefSize(200, 60);
+        taMessage.setWrapText(true);
     }
 
     public void anchorClick(MouseEvent mouseEvent) {

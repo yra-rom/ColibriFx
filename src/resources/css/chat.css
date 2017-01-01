@@ -11,5 +11,7 @@
 }
 
 .taMessage .content {
-    /*-fx-background-color: #ecf4ff ;*/
+    -fx-background-color: #ecf6ff;
+    -fx-border-color: #0093ff;
+    -fx-border-radius: 10 10 10 10;
 }
