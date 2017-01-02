@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
+
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
-
 <AnchorPane minHeight="525" minWidth="300" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.chat.ChatController">
     <children>
         <Label fx:id="lNick" layoutX="20.0" layoutY="16.0" />
         <ImageView fx:id="ivCall" fitHeight="35.0" fitWidth="35.0" layoutX="203.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" styleClass="image">
             <image>
-                <Image url="@../images/call.png" />
+                <Image url="@../images/CallIcon.png" />
             </image>
         </ImageView>
         <ImageView fx:id="ivVideo" fitHeight="35.0" fitWidth="35.0" layoutX="250.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" styleClass="image">
             <image>
-                <Image url="@../images/video.png" />
+                <Image url="@../images/VideoIcon.png" />
             </image>
         </ImageView>
         <Line endX="177.0" layoutX="110.0" layoutY="60.0" startX="-100.0" styleClass="line" />
       <ImageView fx:id="ivFile" fitHeight="30.0" fitWidth="28.0" layoutX="6.0" layoutY="427.0" pickOnBounds="true" preserveRatio="true" styleClass="image">
          <image>
-            <Image url="@../images/file.png" />
+            <Image url="@../images/FileIcon.png" />
          </image>
       </ImageView>
       <Line endX="177.0" layoutX="110.0" layoutY="400.0" startX="-100.0" styleClass="line" />
       <ImageView fx:id="ivSend" fitHeight="17.0" fitWidth="22.0" layoutX="275.0" layoutY="441.0" onMouseClicked="#onSendButtonAction" pickOnBounds="true" preserveRatio="true" styleClass="image">
          <image>
-            <Image url="@../images/send.png" />
+            <Image url="@../images/SendIcon.png" />
          </image>
       </ImageView>
       <TextArea fx:id="taMessage" layoutX="39.0" layoutY="410.0" onKeyPressed="#taMessageAction" prefHeight="79.0" prefWidth="234.0" styleClass="taMessage" />

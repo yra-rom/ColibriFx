@@ -19,16 +19,21 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController implements Controller {
-    @FXML
-    private TextField tfEmailLogin;
-    @FXML
-    private TextField pfPass;
+    private ClientThread thread = ClientThread.getInstance();
 
     private Tooltip tipEmail;
     private Tooltip tipPass;
-    private String tipStyle = "-fx-background-color: rgba(255, 3, 0, 0.5); -fx-text-fill: black;-fx-opacity: 0.5";
+    private String tipStyle =
+        "   -fx-background-color: rgba(255, 3, 0, 0.5);" +
+        "   -fx-text-fill: black;" +
+        "   -fx-opacity: 0.5;";
 
-    private static ClientThread thread = ClientThread.getInstance();
+    @FXML private TextField tfEmailLogin;
+    @FXML private TextField pfPass;
+
+    @FXML public void initialize() {
+        thread.setController(this);
+    }
 
     public void loginAction(ActionEvent actionEvent) throws IOException {
         String email = tfEmailLogin.getText();
@@ -87,10 +92,5 @@ public class LoginController implements Controller {
         if(tipPass != null){
             Tooltip.uninstall(pfPass, tipPass);
         }
-    }
-
-    @FXML
-    public void initialize() {
-        thread.setController(this);
     }
 }

@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ContactsController implements Controller {
+    private ClientThread thread = ClientThread.getInstance();
+    private HashMap<String, Stage> stages = new HashMap<>();
+
     private String textNickNotEditable =
             "    -fx-font-size: 14px;\n" +
             "    -fx-font-style: normal;\n" +
@@ -45,17 +48,11 @@ public class ContactsController implements Controller {
             "   -fx-border-radius: 20 20 20 20;\n" +
             "   -fx-background-radius: 20 20 20 20;";
 
-    private ClientThread thread = ClientThread.getInstance();
-
-    private HashMap<String, Stage> stages = new HashMap<>();
-
-    @FXML private TextField tfNick;
-
     private String oldNick;
+    @FXML private TextField tfNick;
 
     @FXML private ListView<Client> listView;
     private ObservableList<Client> data;
-
 
     @FXML public void initialize() {
         thread.setController(this);
@@ -130,12 +127,15 @@ public class ContactsController implements Controller {
     }
 
     private void openChat(Client client) {
-        if(stages.containsKey(client.getEmail())){
-            Stage stage = stages.get(client.getEmail());
-            stage.requestFocus();
-            return;
+        boolean stageIsOpened = stages.containsKey(client.getEmail());
+        if(stageIsOpened){
+            stages.get(client.getEmail()).requestFocus();
+        }else{
+            openChatStage(client);
         }
+    }
 
+    private void openChatStage(Client client){
         Stage stage = new Stage();
         Parent root = null;
         try {
@@ -147,7 +147,7 @@ public class ContactsController implements Controller {
         stage.setHeight(Activity.HEIGHT);
         stage.setTitle(client.getNick() + " - Colibri");
         stage.setResizable(false);
-        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/icon.png")));
+        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
         Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
         scene.getStylesheets().add(0, "resources/css/chat.css");
         stage.setScene(scene);

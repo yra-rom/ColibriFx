@@ -16,7 +16,7 @@
                <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="56.0" layoutY="14.0" pickOnBounds="true"
                           preserveRatio="true">
                <image>
-                  <Image url="@../images/contacts-256blue.png" />
+                  <Image url="@../images/LoginIcon.png" />
                </image>
                </ImageView>
 

@@ -17,7 +17,7 @@ public class MainActivity extends Application {
         stage.setHeight(Activity.HEIGHT);
         stage.setTitle("Colibri");
         stage.setResizable(false);
-        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/icon.png")));
+        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
         Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
         scene.getStylesheets().add(0, "resources/css/login.css");
 //        scene.getStylesheets().add(0, "resources/css/chat.css");
