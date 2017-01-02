@@ -5,13 +5,19 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ChatController implements Controller {
     //private ClientThread thread = ClientThread.getInstance();
@@ -31,13 +37,19 @@ public class ChatController implements Controller {
     @FXML
     private ImageView ivSend;
 
+    @FXML
+    private ListView<Message> lvChats;
+    private ObservableList<Message> data;
+
 
     @FXML
     public void initialize() {
         lNick.setText("Friend's Nick");
         initTA();
-        ivSend.disableProperty();
         initImageListeners();
+
+        data = FXCollections.observableArrayList();
+        lvChats.setItems(data);
         //thread.setController(this);
     }
 
@@ -82,7 +94,23 @@ public class ChatController implements Controller {
         taMessage.setWrapText(true);
     }
 
-    public void anchorClick(MouseEvent mouseEvent) {
-        System.out.println(mouseEvent.getX());
+    public void addMessage(Message message){
+        data.add(message);
+        lvChats.scrollTo(lvChats.getItems().size());
+    }
+
+
+    public void onSendButtonAction(MouseEvent mouseEvent) {
+        String text = taMessage.getText();
+        if(text.equals("")){
+            return;
+        }
+        String from = "You";
+        String time = new SimpleDateFormat("H:mm:ss").format(new Date().getTime());
+
+        Message message = new Message.MessageBuilder().text(text).from(from).time(time).build();
+
+        addMessage(message);
+        taMessage.setText("");
     }
 }

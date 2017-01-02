@@ -15,3 +15,20 @@
     -fx-border-color: #0093ff;
     -fx-border-radius: 10 10 10 10;
 }
+
+
+.lvChats {
+    -fx-background-color: #ecf4ff;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #afeafc;
+    -fx-text-fill: black;
+}
+.list-cell:odd, .list-cell:even {
+    -fx-background-color: inherit;
+}
+
+.line{
+    -fx-stroke: #0093ff;
+}
