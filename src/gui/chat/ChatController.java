@@ -1,5 +1,6 @@
 package gui.chat;
 
+import client.ClientThread;
 import gui.Controller;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -13,6 +14,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
@@ -20,37 +23,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ChatController implements Controller {
-    //private ClientThread thread = ClientThread.getInstance();
+    private ClientThread thread = ClientThread.getInstance();
 
-    @FXML
-    private TextArea taMessage;
+    @FXML private TextArea taMessage;
 
-    @FXML
-    private Label lNick;
+    @FXML private Label lNick;
 
-    @FXML
-    private ImageView ivCall;
-    @FXML
-    private ImageView ivVideo;
-    @FXML
-    private ImageView ivFile;
-    @FXML
-    private ImageView ivSend;
+    @FXML private ImageView ivCall;
+    @FXML private ImageView ivVideo;
+    @FXML private ImageView ivFile;
+    @FXML private ImageView ivSend;
 
-    @FXML
-    private ListView<Message> lvChats;
+    @FXML private ListView<Message> lvChats;
     private ObservableList<Message> data;
 
 
-    @FXML
-    public void initialize() {
+    @FXML public void initialize() {
         lNick.setText("Friend's Nick");
-        initTA();
         initImageListeners();
 
         data = FXCollections.observableArrayList();
         lvChats.setItems(data);
-        //thread.setController(this);
+        thread.setController(this);
+        initTA();
     }
 
     private void initImageListeners() {
@@ -90,7 +85,6 @@ public class ChatController implements Controller {
     }
 
     private void initTA() {
-        //taMessage.setPrefSize(200, 60);
         taMessage.setWrapText(true);
     }
 
@@ -99,8 +93,17 @@ public class ChatController implements Controller {
         lvChats.scrollTo(lvChats.getItems().size());
     }
 
-
     public void onSendButtonAction(MouseEvent mouseEvent) {
+        sendMessage();
+    }
+
+    public void taMessageAction(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER && event.isControlDown()) {
+            sendMessage();
+        }
+    }
+
+    private void sendMessage() {
         String text = taMessage.getText();
         if(text.equals("")){
             return;
@@ -113,4 +116,5 @@ public class ChatController implements Controller {
         addMessage(message);
         taMessage.setText("");
     }
+
 }

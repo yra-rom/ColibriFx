@@ -4,17 +4,20 @@ public class Message {
     private String text;
     private String time;
     private String from;
+    private String to;
 
     private Message(MessageBuilder builder){
         this.text = builder.text;
         this.from = builder.from;
         this.time = builder.time;
+        this.to = builder.to;
     }
 
     public static class MessageBuilder {
         private String text;
         private String time;
         private String from;
+        private String to;
 
         public MessageBuilder text(String text){
             this.text = text;
@@ -23,6 +26,11 @@ public class Message {
 
         public MessageBuilder from(String from){
             this.from = from;
+            return this;
+        }
+
+        public MessageBuilder to(String to){
+            this.to = to;
             return this;
         }
 

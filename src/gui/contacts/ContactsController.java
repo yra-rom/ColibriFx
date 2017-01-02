@@ -2,18 +2,25 @@ package gui.contacts;
 
 import client.Client;
 import client.ClientThread;
+import constants.Activity;
 import gui.Controller;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ContactsController implements Controller {
     private String textNickNotEditable =
@@ -40,17 +47,17 @@ public class ContactsController implements Controller {
 
     private ClientThread thread = ClientThread.getInstance();
 
-    @FXML
-    private TextField tfNick;
+    private HashMap<String, Stage> stages = new HashMap<>();
+
+    @FXML private TextField tfNick;
 
     private String oldNick;
 
-    @FXML
-    private ListView<Client> listView;
+    @FXML private ListView<Client> listView;
     private ObservableList<Client> data;
 
-    @FXML
-    public void initialize() {
+
+    @FXML public void initialize() {
         thread.setController(this);
         String nick = ClientThread.getInstance().getClient().getNick();
         tfNick.setText(nick);
@@ -66,11 +73,11 @@ public class ContactsController implements Controller {
     }
 
     public void addFriends(ArrayList<Client> clients){
-//        ArrayList<String> clientsStr = new ArrayList<>();
-//        clients.forEach(c -> clientsStr.add(c.getNick()));
-//        data.setAll(clientsStr);
-
-        data.setAll(clients);
+        Platform.runLater(() ->{
+            data.clear();
+            data.setAll(clients);
+            listView.setItems(data);
+        });
     }
 
     private void deselectTf() {
@@ -123,12 +130,32 @@ public class ContactsController implements Controller {
     }
 
     private void openChat(Client client) {
-        System.out.println("Opening chat " + client.getEmail());
-    }
+        if(stages.containsKey(client.getEmail())){
+            Stage stage = stages.get(client.getEmail());
+            stage.requestFocus();
+            return;
+        }
 
-    private static short count = 0;
-
-    public void onButtonAction(ActionEvent actionEvent) {
-        //data.add("New item " + count++);
+        Stage stage = new Stage();
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stage.setWidth(Activity.WIDTH);
+        stage.setHeight(Activity.HEIGHT);
+        stage.setTitle(client.getNick() + " - Colibri");
+        stage.setResizable(false);
+        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/icon.png")));
+        Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
+        scene.getStylesheets().add(0, "resources/css/chat.css");
+        stage.setScene(scene);
+        stage.setOnCloseRequest(event -> {
+            //Stop Messenger thread???
+            stage.close();
+        });
+        stage.show();
+        stages.put(client.getEmail(), stage);
     }
 }

@@ -4,6 +4,7 @@ import constants.Authentication;
 import constants.SendKeys;
 import constants.ServerInfo;
 import gui.Controller;
+import gui.chat.Message;
 import gui.contacts.ContactsController;
 import logger.Log;
 
@@ -13,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Singleton
@@ -174,6 +176,59 @@ public class ClientThread extends Thread {
         return status;
     }
 
+    public void sendNewNick(String nick) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(SendKeys.TITLE, SendKeys.NEWNICK);
+        map.put(SendKeys.NEWNICK, nick);
+        map.put(SendKeys.EMAIL, client.getEmail());
+        outcome.add(map);
+    }
+
+    public void askForFriends() {
+        new Thread(() -> {
+            while (!ClientThread.this.isInterrupted()) {
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (controller == null || !(controller instanceof ContactsController)) {
+                    return;
+                }
+                HashMap<String, String> mapOut = new HashMap<>();
+                mapOut.put(SendKeys.TITLE, SendKeys.GET_FRIENDS);
+
+                outcome.add(mapOut);
+
+                HashMap<String, Object> mapIn = findMapByTitle(SendKeys.FRIENDS_ANSWER);
+
+                ArrayList<Client> clients = (ArrayList<Client>) mapIn.get(SendKeys.FRIENDS_ANSWER);
+
+                if (controller != null && controller instanceof ContactsController) {
+                    ((ContactsController) controller).addFriends(clients);
+                }
+
+                System.out.println(client.getEmail() + " received " + clients.size() + " friends.");
+            }
+        }).start();
+    }
+
+    public void sendMessage(Message message) {
+        outcome.add(message);
+    }
+
+    public void receive() {
+    }
+
+    public static void setController(Controller c) {
+        controller = c;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
     private HashMap<String, Object> findMapByTitle(String key){
         HashMap<String, Object> map = null;
         while (map == null){
@@ -195,52 +250,22 @@ public class ClientThread extends Thread {
 //            }
 
             Iterator<Object> iterator = income.iterator();
+            try {
             while(iterator.hasNext()) {
                 Object o = iterator.next();
-                if(o instanceof HashMap) {
+                if (o instanceof HashMap) {
                     HashMap<String, Object> mapIn = (HashMap<String, Object>) o;
                     if (mapIn.get(SendKeys.TITLE).equals(key)) {
                         map = mapIn;
                         iterator.remove();
                         break;
                     }
-                }
+                    }
+            }
+            } catch (ConcurrentModificationException e) {
+                System.out.println("Concurrent error. Trying again.");
             }
         }
         return map;
-    }
-
-    public void sendNewNick(String nick) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(SendKeys.TITLE, SendKeys.NEWNICK);
-        map.put(SendKeys.NEWNICK, nick);
-        map.put(SendKeys.EMAIL, client.getEmail());
-        outcome.add(map);
-    }
-
-    public static void setController(Controller c) {
-        controller = c;
-    }
-
-    public void askForFriends() {
-        if(controller == null || ! (controller instanceof ContactsController)){
-            return;
-        }
-        HashMap<String, String> mapOut = new HashMap<>();
-        mapOut.put(SendKeys.TITLE, SendKeys.GET_FRIENDS);
-
-        outcome.add(mapOut);
-
-        HashMap<String, Object> mapIn = findMapByTitle(SendKeys.FRIENDS_ANSWER);
-
-        ArrayList<Client> clients = (ArrayList<Client>) mapIn.get(SendKeys.FRIENDS_ANSWER);
-
-        if(controller != null && controller instanceof ContactsController){
-            ((ContactsController) controller).addFriends(clients);
-        }
-    }
-
-    public Client getClient() {
-        return client;
     }
 }
