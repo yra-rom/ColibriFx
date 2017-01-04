@@ -20,14 +20,15 @@ import java.util.concurrent.TimeUnit;
  * Singleton
  */
 public class ClientThread extends Thread {
+    public static final int TIMEOUT_FRIEND_REQUEST_SECONDS = 2;
+    private final String TAG = this.getClass().getSimpleName();
     private static final String HOST = ServerInfo.HOST;
     private static final int PORT = ServerInfo.PORT;
-    private final String TAG = this.getClass().getSimpleName();
     private static Controller controller;
     private Client client;
 
     private Queue<Object> outcome = new ConcurrentLinkedQueue<>();
-    private List<Object> income  = Collections.synchronizedList(new ArrayList<Object>());
+    private List<Object> income = Collections.synchronizedList(new ArrayList<>());
 
     private Socket socket;
 
@@ -73,6 +74,7 @@ public class ClientThread extends Thread {
                     objectOutput.flush();
                     objectOutput.writeObject(o);
                     objectOutput.flush();
+                    Log.i("", "Sending " + ((HashMap) o).get(SendKeys.TITLE));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -98,6 +100,7 @@ public class ClientThread extends Thread {
                         Object o = objectInput.readObject();
                         if (o instanceof HashMap) {
                             income.add(o);
+                            Log.i("", "Receiving " + ((HashMap) o).get(SendKeys.TITLE));
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {
@@ -188,7 +191,7 @@ public class ClientThread extends Thread {
         new Thread(() -> {
             while (!ClientThread.this.isInterrupted()) {
                 try {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(TIMEOUT_FRIEND_REQUEST_SECONDS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -216,9 +219,6 @@ public class ClientThread extends Thread {
 
     public void sendMessage(Message message) {
         outcome.add(message);
-    }
-
-    public void receive() {
     }
 
     public static void setController(Controller c) {

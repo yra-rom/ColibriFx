@@ -1,3 +1,5 @@
+package gui;
+
 import client.ClientThread;
 import constants.Activity;
 import javafx.application.Application;
@@ -7,24 +9,31 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class MainActivity extends Application {
-    //293 496
+    //496x293 size
     @Override
     public void start(Stage stage) throws Exception{
+        startLoginScene(stage);
+    }
+
+    private void startLoginScene(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/login.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
+//      Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
+
         stage.setWidth(Activity.WIDTH);
         stage.setHeight(Activity.HEIGHT);
         stage.setTitle("Colibri");
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+
         Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
         scene.getStylesheets().add(0, "resources/css/login.css");
-//        scene.getStylesheets().add(0, "resources/css/chat.css");
+//      scene.getStylesheets().add(0, "resources/css/chat.css");
         stage.setScene(scene);
         stage.setOnCloseRequest(event -> {
             ClientThread.getInstance().close();
-
             stage.close();
             System.exit(0);
         });

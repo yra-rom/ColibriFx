@@ -11,7 +11,7 @@ public final class Client implements Serializable {
     private Client(ClientBuilder builder) {
         this.nick = builder.nick;
         this.email = builder.email;
-        this.pass  = builder.pass;
+        this.pass = builder.pass;
         this.confirmed = false;
     }
 
@@ -45,22 +45,22 @@ public final class Client implements Serializable {
         private String email;
         private String pass;
 
-        public ClientBuilder nick(String nick){
+        public ClientBuilder nick(String nick) {
             this.nick = nick;
             return this;
         }
 
-        public ClientBuilder email(String email){
+        public ClientBuilder email(String email) {
             this.email = email;
             return this;
         }
 
-        public ClientBuilder pass(String pass){
+        public ClientBuilder pass(String pass) {
             this.pass = pass;
             return this;
         }
 
-        public Client build(){
+        public Client build() {
             return new Client(this);
         }
     }

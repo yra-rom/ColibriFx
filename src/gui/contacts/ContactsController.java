@@ -136,26 +136,25 @@ public class ContactsController implements Controller {
     }
 
     private void openChatStage(Client client){
-        Stage stage = new Stage();
-        Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
+            Stage stage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
+            stage.setWidth(Activity.WIDTH);
+            stage.setHeight(Activity.HEIGHT);
+            stage.setTitle(client.getNick() + " - Colibri");
+            stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+            Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
+            scene.getStylesheets().add(0, "resources/css/chat.css");
+            stage.setScene(scene);
+            stage.setOnCloseRequest(event -> {
+                //Stop Messenger thread???
+                stage.close();
+            });
+            stage.show();
+            stages.put(client.getEmail(), stage);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        stage.setWidth(Activity.WIDTH);
-        stage.setHeight(Activity.HEIGHT);
-        stage.setTitle(client.getNick() + " - Colibri");
-        stage.setResizable(false);
-        stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
-        Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
-        scene.getStylesheets().add(0, "resources/css/chat.css");
-        stage.setScene(scene);
-        stage.setOnCloseRequest(event -> {
-            //Stop Messenger thread???
-            stage.close();
-        });
-        stage.show();
-        stages.put(client.getEmail(), stage);
     }
 }
