@@ -4,8 +4,8 @@ import constants.Authentication;
 import constants.SendKeys;
 import constants.ServerInfo;
 import gui.Controller;
-import gui.chat.Message;
 import gui.contacts.ContactsController;
+import lib.Message;
 import logger.Log;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,8 +27,8 @@ public class ClientThread extends Thread {
     private static Controller controller;
     private Client client;
 
-    private Queue<Object> outcome = new ConcurrentLinkedQueue<>();
-    private List<Object> income = Collections.synchronizedList(new ArrayList<>());
+    private Queue<Object> outcome = new LinkedBlockingDeque<>();
+    private Queue<Object> income  = new LinkedBlockingDeque<>();
 
     private Socket socket;
 
@@ -47,7 +47,8 @@ public class ClientThread extends Thread {
 
             write();
             read();
-            while (!isInterrupted() && socket.isConnected());
+
+            answerRequests();
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
@@ -67,25 +68,26 @@ public class ClientThread extends Thread {
             try {
                 objectOutput = new ObjectOutputStream(socket.getOutputStream());
                 while ( !ClientThread.this.isInterrupted() && socket.isConnected()) {
-                    while (outcome.isEmpty()){
+                    if (outcome.isEmpty()) {
                         Thread.yield();
+                    } else {
+                        Object o = outcome.poll();
+                        objectOutput.flush();
+                        objectOutput.writeObject(o);
+                        objectOutput.flush();
+                        Log.i("", "Sending " + ((HashMap) o).get(SendKeys.TITLE));
                     }
-                    Object o = outcome.poll();
-                    objectOutput.flush();
-                    objectOutput.writeObject(o);
-                    objectOutput.flush();
-                    Log.i("", "Sending " + ((HashMap) o).get(SendKeys.TITLE));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if (objectOutput != null) {
-                    try {
-                        objectOutput.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                if (objectOutput != null) {
+//                    try {
+//                        objectOutput.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         }).start();
     }
@@ -106,13 +108,13 @@ public class ClientThread extends Thread {
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 } finally {
-                    if (objectInput != null) {
-                        try {
-                            objectInput.close();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
+//                    if (objectInput != null) {
+//                        try {
+//                            objectInput.close();
+//                        } catch (IOException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -143,7 +145,7 @@ public class ClientThread extends Thread {
 
         String status = "";
 
-        HashMap<String, Object> map = findMapByTitle(SendKeys.AUTHENTICATION_ANSWER);
+        HashMap<String, Object> map = findMapByTitles(SendKeys.AUTHENTICATION_ANSWER);
 
         status = (String) map.get(SendKeys.AUTHENTICATION_ANSWER);
 
@@ -173,7 +175,7 @@ public class ClientThread extends Thread {
 
         outcome.add(mapOut);
 
-        HashMap<String, Object> mapIn = findMapByTitle(SendKeys.REGISTRATION_ANSWER);
+        HashMap<String, Object> mapIn = findMapByTitles(SendKeys.REGISTRATION_ANSWER);
         status = (String) mapIn.get(SendKeys.REGISTRATION_ANSWER);
 
         return status;
@@ -204,7 +206,7 @@ public class ClientThread extends Thread {
 
                 outcome.add(mapOut);
 
-                HashMap<String, Object> mapIn = findMapByTitle(SendKeys.FRIENDS_ANSWER);
+                HashMap<String, Object> mapIn = findMapByTitles(SendKeys.FRIENDS_ANSWER);
 
                 ArrayList<Client> clients = (ArrayList<Client>) mapIn.get(SendKeys.FRIENDS_ANSWER);
 
@@ -221,6 +223,44 @@ public class ClientThread extends Thread {
         outcome.add(message);
     }
 
+    private void answerRequests() {
+        boolean isAuthenticated = client !=null && client.isConfirmed();
+        while(!isAuthenticated){
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while (!isInterrupted()
+                && socket.isConnected()
+                && client != null
+                && client.isConfirmed()) {
+            Object o = getNextRequest();
+            if (o instanceof Message) {
+                Message message = (Message) o;
+                String from = message.getFrom();
+                //TODO
+
+            } else if (o instanceof HashMap) {
+
+            }
+        }
+    }
+
+    private Object getNextRequest(){
+        Object o = null;
+        while((o = income.poll()) == null){
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return o;
+    }
+
     public static void setController(Controller c) {
         controller = c;
     }
@@ -229,43 +269,65 @@ public class ClientThread extends Thread {
         return client;
     }
 
-    private HashMap<String, Object> findMapByTitle(String key){
-        HashMap<String, Object> map = null;
-        while (map == null){
-//            for (HashMap<String, String> mapIn : income) {
-//                if (mapIn.get(SendKeys.TITLE).equals(key)) {
-//                    map = mapIn;
-//                    income.remove(mapIn);
-//                    break;
-//                }
-//            }
+//    private HashMap<String, Object> findMapByTitle(String key){
+//        HashMap<String, Object> map = null;
+//        while (map == null){
+//
+//
+////            for (HashMap<String, String> mapIn : income) {
+////                if (mapIn.get(SendKeys.TITLE).equals(key)) {
+////                    map = mapIn;
+////                    income.remove(mapIn);
+////                    break;
+////                }
+////            }
+//
+////            for (Iterator<HashMap<String, String>> it = income.iterator(); it.hasNext(); ) {
+////                HashMap<String, String> mapIn = it.next();
+////                if (mapIn.get(SendKeys.TITLE).equals(key)) {
+////                    map = mapIn;
+////                    it.remove();
+////                    break;
+////                }
+////            }
+//
+////            Iterator<Object> iterator = income.iterator();
+////            try {
+////                while(iterator.hasNext()) {
+////                    Object o = iterator.next();
+////                    if (o instanceof HashMap) {
+////                        HashMap<String, Object> mapIn = (HashMap<String, Object>) o;
+////                        if (mapIn.get(SendKeys.TITLE).equals(key)) {
+////                            map = mapIn;
+////                            iterator.remove();
+////                            break;
+////                        }
+////                    }
+////                }
+////            } catch (ConcurrentModificationException e) {
+////                System.out.println("Concurrent error. Trying again.");
+////            }
+//
+//        }
+//        return map;
+//    }
 
-//            for (Iterator<HashMap<String, String>> it = income.iterator(); it.hasNext(); ) {
-//                HashMap<String, String> mapIn = it.next();
-//                if (mapIn.get(SendKeys.TITLE).equals(key)) {
-//                    map = mapIn;
-//                    it.remove();
-//                    break;
-//                }
-//            }
-
-            Iterator<Object> iterator = income.iterator();
-            try {
-            while(iterator.hasNext()) {
-                Object o = iterator.next();
+    private HashMap<String, Object> findMapByTitles(String ...keys){
+        HashMap<String, Object> map;
+        while (!isInterrupted()) {
+            for (Object o : income) {
                 if (o instanceof HashMap) {
                     HashMap<String, Object> mapIn = (HashMap<String, Object>) o;
-                    if (mapIn.get(SendKeys.TITLE).equals(key)) {
-                        map = mapIn;
-                        iterator.remove();
-                        break;
+                    for (String key : keys) {
+                        if (mapIn.get(SendKeys.TITLE).equals(key)) {
+                            map = mapIn;
+                            income.remove(mapIn);
+                            return map;
+                        }
                     }
-                    }
-            }
-            } catch (ConcurrentModificationException e) {
-                System.out.println("Concurrent error. Trying again.");
+                }
             }
         }
-        return map;
+        return null;
     }
 }

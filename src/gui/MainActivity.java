@@ -24,7 +24,7 @@ public class MainActivity extends Application {
 
         stage.setWidth(Activity.WIDTH);
         stage.setHeight(Activity.HEIGHT);
-        stage.setTitle("Colibri");
+        stage.setTitle(Activity.AppName);
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
 

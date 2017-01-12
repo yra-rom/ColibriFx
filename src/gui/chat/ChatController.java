@@ -1,7 +1,9 @@
 package gui.chat;
 
+import client.Client;
 import client.ClientThread;
 import gui.Controller;
+import gui.contacts.ContactsController;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -18,6 +20,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
+import lib.Message;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,10 +40,15 @@ public class ChatController implements Controller {
     @FXML private ListView<Message> lvChats;
     private ObservableList<Message> data;
 
+    private Client friend;
 
     @FXML public void initialize() {
-        lNick.setText("Friend's Nick");
         initImageListeners();
+
+        if(! ContactsController.stack.isEmpty()){
+            friend = ContactsController.stack.pop();
+            lNick.setText(friend.getNick());
+        }
 
         data = FXCollections.observableArrayList();
         lvChats.setItems(data);
@@ -111,10 +119,11 @@ public class ChatController implements Controller {
         String from = "You";
         String time = new SimpleDateFormat("H:mm:ss").format(new Date().getTime());
 
-        Message message = new Message.MessageBuilder().text(text).from(from).time(time).build();
+        Message message = new Message.MessageBuilder().text(text).from(from).time(time).to(friend.getEmail()).build();
 
         addMessage(message);
         taMessage.setText("");
+        thread.sendMessage(message);
     }
 
 }

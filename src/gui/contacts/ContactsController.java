@@ -4,6 +4,7 @@ import client.Client;
 import client.ClientThread;
 import constants.Activity;
 import gui.Controller;
+import gui.chat.ChatController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,10 +22,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class ContactsController implements Controller {
     private ClientThread thread = ClientThread.getInstance();
     private HashMap<String, Stage> stages = new HashMap<>();
+    public static HashMap<String, ChatController> chats = new HashMap<>();
+    public static Stack<Client> stack = new Stack<>();
 
     private String textNickNotEditable =
             "    -fx-font-size: 14px;\n" +
@@ -138,23 +142,25 @@ public class ContactsController implements Controller {
     private void openChatStage(Client client){
         try {
             Stage stage = new Stage();
+            stages.put(client.getEmail(), stage);
+            stack.push(client);
             Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
             stage.setWidth(Activity.WIDTH);
             stage.setHeight(Activity.HEIGHT);
-            stage.setTitle(client.getNick() + " - Colibri");
+            stage.setTitle(client.getNick() + " - " + Activity.AppName);
             stage.setResizable(false);
             stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
             Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
             scene.getStylesheets().add(0, "resources/css/chat.css");
             stage.setScene(scene);
-            stage.setOnCloseRequest(event -> {
-                //Stop Messenger thread???
-                stage.close();
-            });
+            stage.setOnCloseRequest(e -> stage.close());
             stage.show();
-            stages.put(client.getEmail(), stage);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void registerChat(String email, ChatController controller){
+        chats.put(email, controller);
     }
 }
