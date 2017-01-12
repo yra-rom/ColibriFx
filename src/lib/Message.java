@@ -1,6 +1,8 @@
 package lib;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
     private String text;
     private String time;
     private String from;
@@ -54,6 +56,10 @@ public class Message {
 
     public String getFrom() {
         return from;
+    }
+
+    public String getTo(){
+        return to;
     }
 
     @Override

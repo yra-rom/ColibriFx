@@ -159,8 +159,4 @@ public class ContactsController implements Controller {
             e.printStackTrace();
         }
     }
-
-    public static void registerChat(String email, ChatController controller){
-        chats.put(email, controller);
-    }
 }

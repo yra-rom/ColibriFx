@@ -8,6 +8,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -48,6 +49,7 @@ public class ChatController implements Controller {
         if(! ContactsController.stack.isEmpty()){
             friend = ContactsController.stack.pop();
             lNick.setText(friend.getNick());
+            registerChat(friend.getEmail());
         }
 
         data = FXCollections.observableArrayList();
@@ -96,9 +98,11 @@ public class ChatController implements Controller {
         taMessage.setWrapText(true);
     }
 
-    public void addMessage(Message message){
-        data.add(message);
-        lvChats.scrollTo(lvChats.getItems().size());
+    public void receiveMessage(Message message){
+        Platform.runLater(() -> {
+            data.add(message);
+            lvChats.scrollTo(lvChats.getItems().size());
+        });
     }
 
     public void onSendButtonAction(MouseEvent mouseEvent) {
@@ -116,14 +120,30 @@ public class ChatController implements Controller {
         if(text.equals("")){
             return;
         }
-        String from = "You";
         String time = new SimpleDateFormat("H:mm:ss").format(new Date().getTime());
 
-        Message message = new Message.MessageBuilder().text(text).from(from).time(time).to(friend.getEmail()).build();
+        Message message = new Message.MessageBuilder().
+                text(text).
+                from(ClientThread.getInstance().getClient().getEmail()).
+                time(time).
+                to(friend.getEmail()).build();
 
-        addMessage(message);
+        addYourMessage(message);
         taMessage.setText("");
         thread.sendMessage(message);
+    }
+
+    private void registerChat(String email){
+        ContactsController.chats.put(email, this);
+    }
+
+    private void addYourMessage(Message message){
+        Message messageMy = new Message.MessageBuilder().
+                from("You").
+                to(message.getTo()).
+                time(message.getTime()).
+                text(message.getText()).build();
+        receiveMessage(messageMy);
     }
 
 }

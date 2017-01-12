@@ -4,6 +4,7 @@ import constants.Authentication;
 import constants.SendKeys;
 import constants.ServerInfo;
 import gui.Controller;
+import gui.chat.ChatController;
 import gui.contacts.ContactsController;
 import lib.Message;
 import logger.Log;
@@ -12,7 +13,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Singleton
  */
 public class ClientThread extends Thread {
-    public static final int TIMEOUT_FRIEND_REQUEST_SECONDS = 2;
+    private static final int TIMEOUT_FRIEND_REQUEST_SECONDS = 2;
+    public static final int TIMEOUT_WAIT_FOR_AUTHENTICATION_MILLIS = 25;
     private final String TAG = this.getClass().getSimpleName();
     private static final String HOST = ServerInfo.HOST;
     private static final int PORT = ServerInfo.PORT;
@@ -75,7 +79,7 @@ public class ClientThread extends Thread {
                         objectOutput.flush();
                         objectOutput.writeObject(o);
                         objectOutput.flush();
-                        Log.i("", "Sending " + ((HashMap) o).get(SendKeys.TITLE));
+                        //Log.i("", "Sending " + ((HashMap) o).get(SendKeys.TITLE));
                     }
                 }
             } catch (IOException e) {
@@ -100,10 +104,8 @@ public class ClientThread extends Thread {
                 try {
                     while (!ClientThread.this.isInterrupted() && socket.isConnected()) {
                         Object o = objectInput.readObject();
-                        if (o instanceof HashMap) {
-                            income.add(o);
-                            Log.i("", "Receiving " + ((HashMap) o).get(SendKeys.TITLE));
-                        }
+                        income.add(o);
+                        //Log.i("", "Receiving " + ((HashMap) o).get(SendKeys.TITLE));
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
@@ -224,14 +226,15 @@ public class ClientThread extends Thread {
     }
 
     private void answerRequests() {
-        boolean isAuthenticated = client !=null && client.isConfirmed();
-        while(!isAuthenticated){
+        while (client == null || !client.isConfirmed()) {
             try {
-                Thread.sleep(25);
+                TimeUnit.MILLISECONDS.sleep(TIMEOUT_WAIT_FOR_AUTHENTICATION_MILLIS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+        int a = 0;
 
         while (!isInterrupted()
                 && socket.isConnected()
@@ -240,12 +243,20 @@ public class ClientThread extends Thread {
             Object o = getNextRequest();
             if (o instanceof Message) {
                 Message message = (Message) o;
-                String from = message.getFrom();
-                //TODO
-
+                receiveMessage(message);
             } else if (o instanceof HashMap) {
-
             }
+        }
+    }
+
+    private void receiveMessage(Message message) {
+        Log.d(TAG, "Receive message from " + message.getFrom());
+        String from = message.getFrom();
+        if (ContactsController.chats.containsKey(from)) {
+            Controller controller = ContactsController.chats.get(from);
+            ((ChatController) controller).receiveMessage(message);
+        } else {
+            //TODO if no such stage
         }
     }
 
@@ -330,4 +341,5 @@ public class ClientThread extends Thread {
         }
         return null;
     }
+
 }
