@@ -6,16 +6,14 @@ import constants.ServerInfo;
 import gui.Controller;
 import gui.chat.ChatController;
 import gui.contacts.ContactsController;
+import lib.FilePart;
 import lib.Message;
 import logger.Log;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Queue;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -193,6 +191,7 @@ public class ClientThread extends Thread {
 
     public void askForFriends() {
         new Thread(() -> {
+            setPriority(Thread.MAX_PRIORITY);
             while (!ClientThread.this.isInterrupted()) {
                 try {
                     TimeUnit.SECONDS.sleep(TIMEOUT_FRIEND_REQUEST_SECONDS);
@@ -201,11 +200,17 @@ public class ClientThread extends Thread {
                 }
 
                 if (controller == null || !(controller instanceof ContactsController)) {
-                    return;
+                    try {
+                        TimeUnit.SECONDS.sleep(TIMEOUT_FRIEND_REQUEST_SECONDS);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
                 HashMap<String, String> mapOut = new HashMap<>();
                 mapOut.put(SendKeys.TITLE, SendKeys.GET_FRIENDS);
 
+                Log.d(client.getEmail(),new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + " Asking for friends...");
                 outcome.add(mapOut);
 
                 HashMap<String, Object> mapIn = findMapByTitles(SendKeys.FRIENDS_ANSWER);
@@ -216,13 +221,55 @@ public class ClientThread extends Thread {
                     ((ContactsController) controller).addFriends(clients);
                 }
 
-                System.out.println(client.getEmail() + " received " + clients.size() + " friends.");
+                Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + " received " + clients.size() + " friends.");
             }
         }).start();
     }
 
     public void sendMessage(Message message) {
         outcome.add(message);
+    }
+
+    public void sendFile(File file){
+        try {
+            Log.d(TAG, "Sending file...");
+
+            String fileName = file.getName();
+
+            HashMap<String, String> mapFileStart = new HashMap<>();
+            mapFileStart.put(SendKeys.TITLE, SendKeys.FILE_START);
+            mapFileStart.put(SendKeys.FILE_NAME, fileName);
+            outcome.add(mapFileStart);
+
+
+            FileInputStream fis = new FileInputStream(file);
+            byte[] bytes = new byte[FilePart.MAX_SIZE];
+            int length = fis.read(bytes, 0, FilePart.MAX_SIZE);
+
+            int partCounter = 0;
+
+            while (length != -1){
+                FilePart part = new FilePart.FilePartBuilder().
+                        part(partCounter++).
+                        fileName(fileName).
+                        bytes(Arrays.copyOf(bytes, length)).
+                        length(length).
+                        build();
+
+                outcome.add(part);
+                length = fis.read(bytes);
+            }
+
+            HashMap<String, String> mapFileEnd = new HashMap<>();
+            mapFileEnd.put(SendKeys.TITLE, SendKeys.FILE_END);
+            mapFileEnd.put(SendKeys.FILE_NAME, file.getName());
+            mapFileEnd.put(SendKeys.FILE_PARTS, String.valueOf(partCounter));
+            outcome.add(mapFileStart);
+
+            Log.d(TAG, "File sent.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void answerRequests() {
@@ -233,8 +280,6 @@ public class ClientThread extends Thread {
                 e.printStackTrace();
             }
         }
-
-        int a = 0;
 
         while (!isInterrupted()
                 && socket.isConnected()
@@ -264,6 +309,7 @@ public class ClientThread extends Thread {
         Object o = null;
         while((o = income.poll()) == null){
             try {
+                Thread.yield();
                 Thread.sleep(25);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -279,49 +325,6 @@ public class ClientThread extends Thread {
     public Client getClient() {
         return client;
     }
-
-//    private HashMap<String, Object> findMapByTitle(String key){
-//        HashMap<String, Object> map = null;
-//        while (map == null){
-//
-//
-////            for (HashMap<String, String> mapIn : income) {
-////                if (mapIn.get(SendKeys.TITLE).equals(key)) {
-////                    map = mapIn;
-////                    income.remove(mapIn);
-////                    break;
-////                }
-////            }
-//
-////            for (Iterator<HashMap<String, String>> it = income.iterator(); it.hasNext(); ) {
-////                HashMap<String, String> mapIn = it.next();
-////                if (mapIn.get(SendKeys.TITLE).equals(key)) {
-////                    map = mapIn;
-////                    it.remove();
-////                    break;
-////                }
-////            }
-//
-////            Iterator<Object> iterator = income.iterator();
-////            try {
-////                while(iterator.hasNext()) {
-////                    Object o = iterator.next();
-////                    if (o instanceof HashMap) {
-////                        HashMap<String, Object> mapIn = (HashMap<String, Object>) o;
-////                        if (mapIn.get(SendKeys.TITLE).equals(key)) {
-////                            map = mapIn;
-////                            iterator.remove();
-////                            break;
-////                        }
-////                    }
-////                }
-////            } catch (ConcurrentModificationException e) {
-////                System.out.println("Concurrent error. Trying again.");
-////            }
-//
-//        }
-//        return map;
-//    }
 
     private HashMap<String, Object> findMapByTitles(String ...keys){
         HashMap<String, Object> map;

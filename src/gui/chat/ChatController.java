@@ -19,10 +19,13 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import lib.Message;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -54,7 +57,7 @@ public class ChatController implements Controller {
 
         data = FXCollections.observableArrayList();
         lvChats.setItems(data);
-        thread.setController(this);
+        // thread.setController(this);
         initTA();
     }
 
@@ -146,4 +149,11 @@ public class ChatController implements Controller {
         receiveMessage(messageMy);
     }
 
+    public void ivFileClickAction(MouseEvent mouseEvent) {
+        if(mouseEvent.getButton() == MouseButton.PRIMARY) {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showOpenDialog(null);
+            thread.sendFile(file);
+        }
+    }
 }
