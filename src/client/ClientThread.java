@@ -264,7 +264,7 @@ public class ClientThread extends Thread {
             mapFileEnd.put(SendKeys.TITLE, SendKeys.FILE_END);
             mapFileEnd.put(SendKeys.FILE_NAME, file.getName());
             mapFileEnd.put(SendKeys.FILE_PARTS, String.valueOf(partCounter));
-            outcome.add(mapFileStart);
+            outcome.add(mapFileEnd);
 
             Log.d(TAG, "File sent.");
         } catch (IOException e) {
