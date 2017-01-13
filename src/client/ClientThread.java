@@ -27,10 +27,16 @@ public class ClientThread extends Thread {
     private static final String HOST = ServerInfo.HOST;
     private static final int PORT = ServerInfo.PORT;
     private static Controller controller;
+
     private Client client;
 
     private Queue<Object> outcome = new LinkedBlockingDeque<>();
     private Queue<Object> income  = new LinkedBlockingDeque<>();
+
+    private Queue<FilePart> parts = new LinkedBlockingDeque<>();
+    private HashMap<String, Long> partsInfo = new HashMap<>();
+
+    private HashMap<String, HashMap<String, Object>> infoMaps = new HashMap<>();
 
     private Socket socket;
 
@@ -212,16 +218,6 @@ public class ClientThread extends Thread {
 
                 Log.d(client.getEmail(),new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + " Asking for friends...");
                 outcome.add(mapOut);
-
-                HashMap<String, Object> mapIn = findMapByTitles(SendKeys.FRIENDS_ANSWER);
-
-                ArrayList<Client> clients = (ArrayList<Client>) mapIn.get(SendKeys.FRIENDS_ANSWER);
-
-                if (controller != null && controller instanceof ContactsController) {
-                    ((ContactsController) controller).addFriends(clients);
-                }
-
-                Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + " received " + clients.size() + " friends.");
             }
         }).start();
     }
@@ -230,15 +226,21 @@ public class ClientThread extends Thread {
         outcome.add(message);
     }
 
-    public void sendFile(File file){
+    public void sendFile(File file, Client client){
+        String to = client.getEmail();
         try {
             Log.d(TAG, "Sending file...");
 
             String fileName = file.getName();
+            long fileParts = file.length() / (long) FilePart.MAX_SIZE;
+            fileParts += file.length() % (long) FilePart.MAX_SIZE > 0 ? 1 : 0 ;
 
             HashMap<String, String> mapFileStart = new HashMap<>();
             mapFileStart.put(SendKeys.TITLE, SendKeys.FILE_START);
             mapFileStart.put(SendKeys.FILE_NAME, fileName);
+            mapFileStart.put(SendKeys.TO, to);
+            mapFileStart.put(SendKeys.FROM, this.client.getEmail());
+            mapFileStart.put(SendKeys.FILE_PARTS, String.valueOf(fileParts));
             outcome.add(mapFileStart);
 
 
@@ -254,6 +256,7 @@ public class ClientThread extends Thread {
                         fileName(fileName).
                         bytes(Arrays.copyOf(bytes, length)).
                         length(length).
+                        to(to).
                         build();
 
                 outcome.add(part);
@@ -281,17 +284,103 @@ public class ClientThread extends Thread {
             }
         }
 
-        while (!isInterrupted()
-                && socket.isConnected()
-                && client != null
-                && client.isConfirmed()) {
+        while (!isInterrupted() && socket.isConnected()
+                && client != null && client.isConfirmed()) {
             Object o = getNextRequest();
             if (o instanceof Message) {
                 Message message = (Message) o;
                 receiveMessage(message);
+            } else if(o instanceof FilePart){
+                FilePart filePart = (FilePart) o;
+                this.parts.add(filePart);
             } else if (o instanceof HashMap) {
+                HashMap<String, Object> map = (HashMap<String, Object>) o;
+                String title = (String) map.get(SendKeys.TITLE);
+                if(title.equals(SendKeys.FILE_START)){
+                    infoMaps.put((String) map.get(SendKeys.FILE_NAME), map);
+                    String fileName = (String) map.get(SendKeys.FILE_NAME);
+                    Long partsCount = Long.valueOf((String) map.get(SendKeys.FILE_PARTS));
+                    partsInfo.put(fileName, partsCount);
+                    saveFileFromParts(fileName);
+                }else if(title.equals(SendKeys.FRIENDS_ANSWER)) {
+                    ArrayList<Client> clients = (ArrayList<Client>) map.get(SendKeys.FRIENDS_ANSWER);
+
+                    if (controller != null && controller instanceof ContactsController) {
+                        ((ContactsController) controller).addFriends(clients);
+                    }
+
+                    Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + " received " + clients.size() + " friends.");
+                }
+                else{
+                    Log.d(TAG, "Unknown map " + map.get(SendKeys.TITLE));
+                }
             }
         }
+    }
+
+    private void saveFileFromParts(String fileName) {
+        new Thread(() -> {
+            ArrayList<FilePart> partsLocal = new ArrayList<>();
+            while(! partsInfo.containsKey(fileName) || partsInfo.get(fileName) != partsLocal.size()) {
+                if(this.parts.isEmpty()){
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    for (FilePart part : parts) {
+                        if (fileName.equals(part.getFileName())) {
+                            partsLocal.add(part);
+                            parts.remove(part);
+                        }
+                    }
+                }
+            }
+
+            HashMap<String, Object> mapInfo = infoMaps.get(fileName);
+            String from = (String) mapInfo.get(SendKeys.FROM);
+            String to = (String) mapInfo.get(SendKeys.TO);
+            String fromTo = from + "[-]" + to;
+
+            String DIR_PATH = "src/received/" + fromTo;
+            String FILE_PATH = "src/received/" + fromTo + "/" + fileName;
+
+            File dir = new File(DIR_PATH);
+            if(!dir.exists()){
+                dir.mkdir();
+            }
+
+            File file = new File(FILE_PATH);
+            if(!file.exists()){
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Collections.sort(partsLocal, (o1, o2) -> o1.getPart() < o2.getPart() ? -1 :  1);
+
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+
+                partsLocal.forEach((part) -> {
+                    try {
+                        fos.write(part.getBytes(), 0, part.getLength());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+
+            } catch ( IOException e) {
+                e.printStackTrace();
+                Log.d(client.getEmail(), "File received.");
+            }
+
+
+        }).start();
     }
 
     private void receiveMessage(Message message) {

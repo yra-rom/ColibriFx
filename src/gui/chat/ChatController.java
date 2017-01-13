@@ -153,7 +153,7 @@ public class ChatController implements Controller {
         if(mouseEvent.getButton() == MouseButton.PRIMARY) {
             FileChooser chooser = new FileChooser();
             File file = chooser.showOpenDialog(null);
-            thread.sendFile(file);
+            thread.sendFile(file, friend);
         }
     }
 }

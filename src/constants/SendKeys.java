@@ -23,4 +23,6 @@ public interface SendKeys {
     String FILE_END = "FILE_END";
     String FILE_NAME = "FILE_NAME";
     String FILE_PARTS = "FILE_PARTS";
+    String TO ="TO";
+    String FROM = "FROM";
 }

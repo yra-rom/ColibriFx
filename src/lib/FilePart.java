@@ -7,13 +7,15 @@ public class FilePart implements Serializable {
     private int part;
     private String fileName;
     private byte[] bytes;
-    int length;
+    private int length;
+    private String to;
 
     private FilePart(FilePartBuilder builder){
         this.part = builder.part;
         this.fileName = builder.fileName;
         this.bytes = builder.bytes;
         this.length = builder.length;
+        this.to = builder.to;
     }
 
     public int getPart() {
@@ -32,11 +34,16 @@ public class FilePart implements Serializable {
         return length;
     }
 
+    public String getTo() {
+        return to;
+    }
+
     public static class FilePartBuilder{
         private int part;
         private String fileName;
         private byte[] bytes;
         private int length;
+        private String to;
 
         public FilePartBuilder part(int part){
             this.part = part;
@@ -55,6 +62,11 @@ public class FilePart implements Serializable {
 
         public FilePartBuilder length(int length){
             this.length = length;
+            return this;
+        }
+
+        public FilePartBuilder to(String to){
+            this.to = to;
             return this;
         }
 
