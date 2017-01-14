@@ -301,7 +301,8 @@ public class ClientThread extends Thread {
                     String fileName = (String) map.get(SendKeys.FILE_NAME);
                     Long partsCount = Long.valueOf((String) map.get(SendKeys.FILE_PARTS));
                     partsInfo.put(fileName, partsCount);
-                    saveFileFromParts(fileName);
+                    File file = waitForConfirmation(map);
+                    saveFileFromParts(fileName, file);
                 }else if(title.equals(SendKeys.FRIENDS_ANSWER)) {
                     ArrayList<Client> clients = (ArrayList<Client>) map.get(SendKeys.FRIENDS_ANSWER);
 
@@ -318,7 +319,7 @@ public class ClientThread extends Thread {
         }
     }
 
-    private void saveFileFromParts(String fileName) {
+    private void saveFileFromParts(String fileName, File file) {
         new Thread(() -> {
             ArrayList<FilePart> partsLocal = new ArrayList<>();
             while(! partsInfo.containsKey(fileName) || partsInfo.get(fileName) != partsLocal.size()) {
@@ -351,7 +352,7 @@ public class ClientThread extends Thread {
                 dir.mkdir();
             }
 
-            File file = new File(FILE_PATH);
+            //File file = new File(FILE_PATH);
             if(!file.exists()){
                 try {
                     file.createNewFile();
@@ -434,4 +435,14 @@ public class ClientThread extends Thread {
         return null;
     }
 
+    private File waitForConfirmation(HashMap<String, Object> map){
+        if(map.get(SendKeys.TITLE).equals(SendKeys.FILE_START)) {
+            ChatController controller = ContactsController.chats.get(map.get(SendKeys.FROM));
+            if(controller == null){
+                //TODO make notification
+            }
+            return controller.getConfirmation(map);
+        }
+        return null;
+    }
 }

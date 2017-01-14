@@ -2,6 +2,8 @@ package gui.chat;
 
 import client.Client;
 import client.ClientThread;
+import constants.Activity;
+import constants.SendKeys;
 import gui.Controller;
 import gui.contacts.ContactsController;
 import javafx.animation.Interpolator;
@@ -12,22 +14,27 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import lib.Message;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class ChatController implements Controller {
     private ClientThread thread = ClientThread.getInstance();
@@ -155,5 +162,45 @@ public class ChatController implements Controller {
             File file = chooser.showOpenDialog(null);
             thread.sendFile(file, friend);
         }
+    }
+
+    public File getConfirmation(HashMap<String, Object> map) {
+
+        if(SendKeys.FILE_START.equals(map.get(SendKeys.TITLE))) {
+            String email = (String) map.get(SendKeys.FROM);
+            String fileName = (String) map.get(SendKeys.FILE_NAME);
+
+            final FutureTask query = new FutureTask(new Callable() {
+                @Override
+                public Object call() throws Exception {
+                    File file = null;
+
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText("Do you want to save file " + fileName + " from " + email + "?");
+
+
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        FileChooser chooser = new FileChooser();
+                        chooser.setTitle("Save File - " + Activity.AppName);
+                        file = chooser.showSaveDialog(ContactsController.stages.get(email));
+                    }
+                    return file;
+                }
+            });
+
+            Platform.runLater(query);
+            try {
+                return (File) query.get();
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
     }
 }

@@ -26,7 +26,7 @@ import java.util.Stack;
 
 public class ContactsController implements Controller {
     private ClientThread thread = ClientThread.getInstance();
-    private HashMap<String, Stage> stages = new HashMap<>();
+    public static HashMap<String, Stage> stages = new HashMap<>();
     public static HashMap<String, ChatController> chats = new HashMap<>();
     public static Stack<Client> stack = new Stack<>();
 
@@ -159,4 +159,5 @@ public class ContactsController implements Controller {
             e.printStackTrace();
         }
     }
+
 }
