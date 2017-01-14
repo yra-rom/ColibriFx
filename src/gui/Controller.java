@@ -1,5 +1,3 @@
 package gui;
 
-public interface Controller{
-
-}
+public interface Controller{}

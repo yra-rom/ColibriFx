@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClientThread extends Thread {
     private static final int TIMEOUT_FRIEND_REQUEST_SECONDS = 2;
-    public static final int TIMEOUT_WAIT_FOR_AUTHENTICATION_MILLIS = 25;
+    private static final int TIMEOUT_WAIT_FOR_AUTHENTICATION_MILLIS = 25;
     private final String TAG = this.getClass().getSimpleName();
     private static final String HOST = ServerInfo.HOST;
     private static final int PORT = ServerInfo.PORT;
@@ -393,6 +393,17 @@ public class ClientThread extends Thread {
             if(makeIncomeNotification(from)){
                 if(this.controller != null && this.controller instanceof ContactsController){
                     ((ContactsController)this.controller).openChat(from);
+
+                    Controller controller = null;
+                    while ((controller = ContactsController.chats.get(from)) == null ){
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(25);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    ((ChatController) controller).receiveMessage(message);
                 }
             }
         }
