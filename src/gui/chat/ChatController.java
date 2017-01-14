@@ -160,13 +160,15 @@ public class ChatController implements Controller {
         if(mouseEvent.getButton() == MouseButton.PRIMARY) {
             FileChooser chooser = new FileChooser();
             File file = chooser.showOpenDialog(null);
-            thread.sendFile(file, friend);
-            Message message = new Message.MessageBuilder().
-                    from("You").
-                    text("Sent file " + file.getName()).
-                    time(getCurrentTime()).build();
+            if(file != null) {
+                thread.sendFile(file, friend);
+                Message message = new Message.MessageBuilder().
+                        from("You").
+                        text("Sent file " + file.getName()).
+                        time(getCurrentTime()).build();
 
-            addYourMessage(message);
+                addYourMessage(message);
+            }
         }
     }
 

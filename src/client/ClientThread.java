@@ -390,7 +390,11 @@ public class ClientThread extends Thread {
             Controller controller = ContactsController.chats.get(from);
             ((ChatController) controller).receiveMessage(message);
         } else {
-            //TODO if no such stage
+            if(makeIncomeNotification(from)){
+                if(this.controller != null && this.controller instanceof ContactsController){
+                    ((ContactsController)this.controller).openChat(from);
+                }
+            }
         }
     }
 
@@ -438,10 +442,21 @@ public class ClientThread extends Thread {
         if(map.get(SendKeys.TITLE).equals(SendKeys.FILE_START)) {
             ChatController controller = ContactsController.chats.get(map.get(SendKeys.FROM));
             if(controller == null){
-                //TODO make notification
+                if( makeIncomeNotification((String) map.get(SendKeys.FROM))){
+                    if(this.controller != null && this.controller instanceof ContactsController){
+                        ((ContactsController)this.controller).openChat((String) map.get(SendKeys.FROM));
+                    }
+                }
+                else{
+                    return null;
+                }
             }
             return controller.getConfirmation(map);
         }
         return null;
+    }
+
+    private boolean makeIncomeNotification(String from) {
+        return controller != null && controller instanceof ContactsController && ((ContactsController) controller).makeIncomeNotification(from);
     }
 }

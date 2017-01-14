@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -22,7 +24,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Stack;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class ContactsController implements Controller {
     private ClientThread thread = ClientThread.getInstance();
@@ -68,6 +74,7 @@ public class ContactsController implements Controller {
 
         data = FXCollections.observableArrayList();
         listView.setItems(data);
+
         addListListeners();
 
         thread.askForFriends();
@@ -131,11 +138,22 @@ public class ContactsController implements Controller {
     }
 
     private void openChat(Client client) {
-        boolean stageIsOpened = stages.containsKey(client.getEmail());
-        if(stageIsOpened){
-            stages.get(client.getEmail()).requestFocus();
-        }else{
-            openChatStage(client);
+        Platform.runLater(() -> {
+            boolean stageIsOpened = stages.containsKey(client.getEmail());
+            if(stageIsOpened){
+                stages.get(client.getEmail()).requestFocus();
+            }else{
+                openChatStage(client);
+            }
+        });
+    }
+
+    public void openChat(String email){
+        for (Client client : data){
+            if(client.getEmail().equals(email)){
+                openChat(client);
+                break;
+            }
         }
     }
 
@@ -153,11 +171,43 @@ public class ContactsController implements Controller {
             Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
             scene.getStylesheets().add(0, "resources/css/chat.css");
             stage.setScene(scene);
-            stage.setOnCloseRequest(e -> stage.close());
+            stage.setOnCloseRequest(e -> {
+                chats.remove(client.getEmail());
+                stages.remove(client.getEmail());
+                stage.close();
+            });
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean makeIncomeNotification(String from){
+
+        final FutureTask query = new FutureTask(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("User " + from + " is trying to get in touch with you.");
+                alert.setContentText("Do you want to chat with him/her or receive files ?");
+
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+
+                Optional<ButtonType> result = alert.showAndWait();
+
+                return result.get() == ButtonType.OK;
+            }
+        });
+        Platform.runLater(query);
+
+        try {
+            return (boolean) query.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
