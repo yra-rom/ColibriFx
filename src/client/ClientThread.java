@@ -270,6 +270,7 @@ public class ClientThread extends Thread {
             outcome.add(mapFileEnd);
 
             Log.d(TAG, "File sent.");
+            //System.gc();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -345,14 +346,12 @@ public class ClientThread extends Thread {
             String fromTo = from + "[-]" + to;
 
             String DIR_PATH = "src/received/" + fromTo;
-            String FILE_PATH = "src/received/" + fromTo + "/" + fileName;
 
             File dir = new File(DIR_PATH);
             if(!dir.exists()){
                 dir.mkdir();
             }
 
-            //File file = new File(FILE_PATH);
             if(!file.exists()){
                 try {
                     file.createNewFile();

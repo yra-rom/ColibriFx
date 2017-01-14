@@ -108,13 +108,6 @@ public class ChatController implements Controller {
         taMessage.setWrapText(true);
     }
 
-    public void receiveMessage(Message message){
-        Platform.runLater(() -> {
-            data.add(message);
-            lvChats.scrollTo(lvChats.getItems().size());
-        });
-    }
-
     public void onSendButtonAction(MouseEvent mouseEvent) {
         sendMessage();
     }
@@ -123,6 +116,13 @@ public class ChatController implements Controller {
         if (event.getCode() == KeyCode.ENTER && event.isControlDown()) {
             sendMessage();
         }
+    }
+
+    public void receiveMessage(Message message){
+        Platform.runLater(() -> {
+            data.add(message);
+            lvChats.scrollTo(lvChats.getItems().size());
+        });
     }
 
     private void sendMessage() {
@@ -143,10 +143,6 @@ public class ChatController implements Controller {
         thread.sendMessage(message);
     }
 
-    private void registerChat(String email){
-        ContactsController.chats.put(email, this);
-    }
-
     private void addYourMessage(Message message){
         Message messageMy = new Message.MessageBuilder().
                 from("You").
@@ -156,11 +152,21 @@ public class ChatController implements Controller {
         receiveMessage(messageMy);
     }
 
+    private void registerChat(String email){
+        ContactsController.chats.put(email, this);
+    }
+
     public void ivFileClickAction(MouseEvent mouseEvent) {
         if(mouseEvent.getButton() == MouseButton.PRIMARY) {
             FileChooser chooser = new FileChooser();
             File file = chooser.showOpenDialog(null);
             thread.sendFile(file, friend);
+            Message message = new Message.MessageBuilder().
+                    from("You").
+                    text("Sent file " + file.getName()).
+                    time(getCurrentTime()).build();
+
+            addYourMessage(message);
         }
     }
 
@@ -187,6 +193,19 @@ public class ChatController implements Controller {
                     if (result.get() == ButtonType.OK) {
                         FileChooser chooser = new FileChooser();
                         chooser.setTitle("Save File - " + Activity.AppName);
+
+                        String[] splited = fileName.split("\\.");
+                        String format = "." + splited[splited.length - 1];
+
+                        chooser.setInitialFileName(fileName +  format);
+
+                        chooser.getExtensionFilters().addAll(
+                                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
+                                new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
+                                new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+
                         file = chooser.showSaveDialog(ContactsController.stages.get(email));
                     }
                     return file;
@@ -194,13 +213,29 @@ public class ChatController implements Controller {
             });
 
             Platform.runLater(query);
+
+            File file = null;
             try {
-                return (File) query.get();
-            } catch (ExecutionException | InterruptedException e) {
+                file = (File) query.get();
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
+
+            Message message = new Message.MessageBuilder().
+                    from((String) map.get(SendKeys.FROM)).
+                    text((file == null ? "Rejected " : "Confirmed ") + " file " + (String) map.get(SendKeys.FILE_NAME) ).
+                    time(new SimpleDateFormat("H:mm:ss").format(new Date().getTime())).build();
+
+            receiveMessage(message);
+
+            return file;
         }
 
+
         return null;
+    }
+
+    private String getCurrentTime(){
+        return new SimpleDateFormat("H:mm:ss").format(new Date().getTime());
     }
 }
