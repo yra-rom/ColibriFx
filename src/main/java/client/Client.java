@@ -1,7 +1,12 @@
 package client;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
 public final class Client implements Serializable {
     private String nick;
     private String email;
@@ -13,30 +18,6 @@ public final class Client implements Serializable {
         this.email = builder.email;
         this.pass = builder.pass;
         this.confirmed = false;
-    }
-
-    public String getNick() {
-        return nick;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public boolean isConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(boolean confirmed) {
-        this.confirmed = confirmed;
-    }
-
-    public void setNick(String nick) {
-        this.nick = nick;
     }
 
     public static class ClientBuilder {

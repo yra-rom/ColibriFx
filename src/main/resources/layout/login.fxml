@@ -8,8 +8,13 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import java.net.URL?>
 <GridPane alignment="center" hgap="10" styleClass="mainWindow" vgap="10" xmlns="http://javafx.com/javafx/8"
           xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.login.LoginController">
+
+    <stylesheets>
+        <URL value="@../css/login.css" />
+    </stylesheets>
    <children>
        <AnchorPane GridPane.rowIndex="1">
            <children>

@@ -5,9 +5,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
+<?import java.net.URL?>
 <AnchorPane maxHeight="475.0" maxWidth="300.0" minHeight="475.0" minWidth="300.0" nodeOrientation="LEFT_TO_RIGHT"
             prefHeight="475.0" prefWidth="300.0" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.contacts.ContactsController">
+    <stylesheets>
+        <URL value="@../css/contacts.css" />
+    </stylesheets>
     <children>
         <TextField fx:id="tfNick" alignment="CENTER" editable="false" layoutX="63" layoutY="2.0"
                    onKeyPressed="#onNickKeyPress" onMouseClicked="#onNickClick" promptText="Your Nick"

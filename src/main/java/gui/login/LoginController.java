@@ -63,9 +63,11 @@ public class LoginController implements Controller {
                 break;
             }
             case Authentication.SUCCESS:
-                Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/contacts.fxml"));
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("/layout/contacts.fxml"));
+                
+                Parent root = loader.load();
                 Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
-                scene.getStylesheets().add("resources/css/contacts.css");
                 Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
                 stage.setScene(scene);
                 break;
@@ -73,9 +75,12 @@ public class LoginController implements Controller {
     }
 
     public void registrationAction(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/registration.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+
+        loader.setLocation(getClass().getResource("/layout/registration.fxml"));
+
+        Parent root = loader.load();
         Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
-        scene.getStylesheets().add("resources/css/registration.css");
         Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
     }

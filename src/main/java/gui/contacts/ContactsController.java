@@ -162,14 +162,16 @@ public class ContactsController implements Controller {
             Stage stage = new Stage();
             stages.put(client.getEmail(), stage);
             stack.push(client);
-            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/chat.fxml"));
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/layout/chat.fxml"));
+            Parent root = loader.load();
             stage.setWidth(Activity.WIDTH);
             stage.setHeight(Activity.HEIGHT);
             stage.setTitle(client.getNick() + " - " + Activity.AppName);
             stage.setResizable(false);
-            stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+//            stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
             Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
-            scene.getStylesheets().add(0, "resources/css/chat.css");
             stage.setScene(scene);
             stage.setOnCloseRequest(e -> {
                 chats.remove(client.getEmail());

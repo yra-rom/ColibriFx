@@ -105,9 +105,12 @@ public class RegistrationController implements Controller {
     }
 
     private void openLogin(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("resources/layout/login.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+
+        loader.setLocation(getClass().getResource("/layout/login.fxml"));
+
+        Parent root = loader.load();
         Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
-        scene.getStylesheets().add("resources/css/login.css");
         stage.setScene(scene);
     }
 
