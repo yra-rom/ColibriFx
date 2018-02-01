@@ -4,7 +4,7 @@ import com.colibri.client.ClientThread;
 import com.colibri.client.constants.Activity;
 import com.colibri.client.gui.Controller;
 import com.colibri.client.gui.contacts.ContactsController;
-import com.colibri.common.client.Client;
+import com.colibri.common.dto.Client;
 import com.colibri.common.constants.SendKeys;
 import com.colibri.common.dto.Message;
 import javafx.animation.Interpolator;
@@ -192,40 +192,37 @@ public class ChatController implements Controller {
             String email = (String) map.get(SendKeys.FROM);
             String fileName = (String) map.get(SendKeys.FILE_NAME);
 
-            final FutureTask query = new FutureTask(new Callable() {
-                @Override
-                public Object call() throws Exception {
-                    File file = null;
+            final FutureTask query = new FutureTask(() -> {
+                File file = null;
 
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Confirmation");
-                    alert.setHeaderText("Do you want to save file " + fileName + " from " + email + "?");
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Do you want to save file " + fileName + " from " + email + "?");
 
 
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(new Image(Thread.currentThread().getContextClassLoader().getResourceAsStream("images/MainIcon.png")));
 
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
-                        FileChooser chooser = new FileChooser();
-                        chooser.setTitle("Save File - " + Activity.AppName);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    FileChooser chooser = new FileChooser();
+                    chooser.setTitle("Save File - " + Activity.AppName);
 
-                        String[] splited = fileName.split("\\.");
-                        String format = "." + splited[splited.length - 1];
+                    String[] splited = fileName.split("\\.");
+                    String format = "." + splited[splited.length - 1];
 
-                        chooser.setInitialFileName(fileName + format);
+                    chooser.setInitialFileName(fileName + format);
 
-                        chooser.getExtensionFilters().addAll(
-                                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
-                                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
-                                new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
-                                new FileChooser.ExtensionFilter("All Files", "*.*"));
+                    chooser.getExtensionFilters().addAll(
+                            new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
+                            new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
+                            new FileChooser.ExtensionFilter("All Files", "*.*"));
 
 
-                        file = chooser.showSaveDialog(ContactsController.stages.get(email));
-                    }
-                    return file;
+                    file = chooser.showSaveDialog(ContactsController.stages.get(email));
                 }
+                return file;
             });
 
             Platform.runLater(query);
@@ -239,7 +236,7 @@ public class ChatController implements Controller {
 
             Message message = Message.builder()
                     .from((String) map.get(SendKeys.FROM))
-                    .text((file == null ? "Rejected " : "Confirmed ") + " file " + (String) map.get(SendKeys.FILE_NAME))
+                    .text((file == null ? "Rejected " : "Confirmed ") + " file " + map.get(SendKeys.FILE_NAME))
                     .time(new SimpleDateFormat("H:mm:ss").format(new Date().getTime()))
                     .build();
 

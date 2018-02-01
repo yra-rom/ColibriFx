@@ -3,7 +3,7 @@ package com.colibri.client.gui.registration;
 import com.colibri.client.ClientThread;
 import com.colibri.client.constants.Activity;
 import com.colibri.client.gui.Controller;
-import com.colibri.common.client.Client;
+import com.colibri.common.dto.Client;
 import com.colibri.common.constants.Registration;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

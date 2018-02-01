@@ -4,7 +4,7 @@ import com.colibri.client.ClientThread;
 import com.colibri.client.constants.Activity;
 import com.colibri.client.gui.Controller;
 import com.colibri.client.gui.chat.ChatController;
-import com.colibri.common.client.Client;
+import com.colibri.common.dto.Client;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -187,21 +187,18 @@ public class ContactsController implements Controller {
 
     public boolean makeIncomeNotification(String from){
 
-        final FutureTask query = new FutureTask(new Callable() {
-            @Override
-            public Object call() throws Exception {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirmation");
-                alert.setHeaderText("User " + from + " is trying to get in touch with you.");
-                alert.setContentText("Do you want to chat with him/her or receive files ?");
+        final FutureTask query = new FutureTask(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("User " + from + " is trying to get in touch with you.");
+            alert.setContentText("Do you want to chat with him/her or receive files ?");
 
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("resources/images/MainIcon.png")));
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image(Thread.currentThread().getContextClassLoader().getResourceAsStream("images/MainIcon.png")));
 
-                Optional<ButtonType> result = alert.showAndWait();
+            Optional<ButtonType> result = alert.showAndWait();
 
-                return result.get() == ButtonType.OK;
-            }
+            return result.get() == ButtonType.OK;
         });
         Platform.runLater(query);
 

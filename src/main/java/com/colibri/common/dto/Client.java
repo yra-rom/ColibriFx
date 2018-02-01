@@ -1,4 +1,4 @@
-package com.colibri.common.client;
+package com.colibri.common.dto;
 
 import lombok.Builder;
 import lombok.Getter;

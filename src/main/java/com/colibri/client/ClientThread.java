@@ -4,7 +4,7 @@ import com.colibri.client.constants.ServerInfo;
 import com.colibri.client.gui.Controller;
 import com.colibri.client.gui.chat.ChatController;
 import com.colibri.client.gui.contacts.ContactsController;
-import com.colibri.common.client.Client;
+import com.colibri.common.dto.Client;
 import com.colibri.common.constants.Authentication;
 import com.colibri.common.constants.SendKeys;
 import com.colibri.common.dto.FilePart;
@@ -74,7 +74,7 @@ public class ClientThread extends Thread {
 
     private void write() {
         new Thread(() -> {
-            ObjectOutputStream objectOutput = null;
+            ObjectOutputStream objectOutput;
             try {
                 objectOutput = new ObjectOutputStream(socket.getOutputStream());
                 while ( !ClientThread.this.isInterrupted() && socket.isConnected()) {
@@ -151,7 +151,7 @@ public class ClientThread extends Thread {
 
         outcome.add(mapOut);
 
-        String status = "";
+        String status;
 
         HashMap<String, Object> map = findMapByTitles(SendKeys.AUTHENTICATION_ANSWER);
 
@@ -173,7 +173,7 @@ public class ClientThread extends Thread {
         String email = client.getEmail();
         String nick = client.getNick();
         String pass = client.getPass();
-        String status = "";
+        String status;
 
         HashMap<String, String> mapOut = new HashMap<>();
         mapOut.put(SendKeys.TITLE, SendKeys.REGISTER);
@@ -313,7 +313,7 @@ public class ClientThread extends Thread {
                         ((ContactsController) controller).addFriends(clients);
                     }
 
-                    Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + "com/colibri/client/received " + clients.size() + " friends.");
+                    Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + "received/ " + clients.size() + " friends.");
                 }
                 else{
                     Log.d(TAG, "Unknown map " + map.get(SendKeys.TITLE));
