@@ -1,5 +1,6 @@
-import client.ClientThread;
-import constants.Activity;
+package com.colibri.client;
+
+import com.colibri.client.constants.Activity;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +13,7 @@ import java.io.IOException;
 public class MainActivity extends Application {
     //496x293 size
     @Override
-    public void start(Stage stage) throws Exception{
+    public void start(Stage stage) throws Exception {
         startLoginScene(stage);
     }
 
@@ -28,7 +29,9 @@ public class MainActivity extends Application {
         stage.setTitle(Activity.AppName);
         stage.setResizable(false);
 
-        stage.getIcons().add( new Image( MainActivity.class.getResourceAsStream( "images/MainIcon.png" )));
+        stage.getIcons().add(new Image(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream("images/MainIcon.png")
+        ));
 
         Scene scene = new Scene(root, Activity.WIDTH, Activity.HEIGHT);
         stage.setScene(scene);

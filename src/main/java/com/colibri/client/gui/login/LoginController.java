@@ -1,10 +1,10 @@
-package gui.login;
+package com.colibri.client.gui.login;
 
-import client.Client;
-import client.ClientThread;
-import constants.Activity;
-import constants.Authentication;
-import gui.Controller;
+import com.colibri.client.ClientThread;
+import com.colibri.client.constants.Activity;
+import com.colibri.client.gui.Controller;
+import com.colibri.common.client.Client;
+import com.colibri.common.constants.Authentication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,7 +38,11 @@ public class LoginController implements Controller {
     public void loginAction(ActionEvent actionEvent) throws IOException {
         String email = tfEmailLogin.getText();
         String pass = pfPass.getText();
-        Client client = new Client.ClientBuilder().email(email).pass(pass).build();
+        Client client = Client.builder()
+                .email(email)
+                .pass(pass)
+                .build();
+
         String status = thread.authentication(client);
 
         switch (status) {

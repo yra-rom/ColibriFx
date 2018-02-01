@@ -8,7 +8,7 @@
 <?import java.net.URL?>
 <AnchorPane maxHeight="475.0" maxWidth="300.0" minHeight="475.0" minWidth="300.0" nodeOrientation="LEFT_TO_RIGHT"
             prefHeight="475.0" prefWidth="300.0" styleClass="mainWindow" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.contacts.ContactsController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.colibri.client.gui.contacts.ContactsController">
     <stylesheets>
         <URL value="@../css/contacts.css" />
     </stylesheets>

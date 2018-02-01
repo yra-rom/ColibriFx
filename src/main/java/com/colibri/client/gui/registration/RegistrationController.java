@@ -1,10 +1,10 @@
-package gui.registration;
+package com.colibri.client.gui.registration;
 
-import client.Client;
-import client.ClientThread;
-import constants.Activity;
-import constants.Registration;
-import gui.Controller;
+import com.colibri.client.ClientThread;
+import com.colibri.client.constants.Activity;
+import com.colibri.client.gui.Controller;
+import com.colibri.common.client.Client;
+import com.colibri.common.constants.Registration;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,7 +51,12 @@ public class RegistrationController implements Controller {
             return;
         }
 
-        Client client = new Client.ClientBuilder().nick(nick).email(email).pass(pass).build();
+        Client client = Client.builder()
+                .nick(nick)
+                .email(email)
+                .pass(pass)
+                .build();
+
         String status = thread.registration(client);
         System.out.println("Registration status: " + status);
 

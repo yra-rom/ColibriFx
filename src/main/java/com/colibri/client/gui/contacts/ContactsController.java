@@ -1,10 +1,10 @@
-package gui.contacts;
+package com.colibri.client.gui.contacts;
 
-import client.Client;
-import client.ClientThread;
-import constants.Activity;
-import gui.Controller;
-import gui.chat.ChatController;
+import com.colibri.client.ClientThread;
+import com.colibri.client.constants.Activity;
+import com.colibri.client.gui.Controller;
+import com.colibri.client.gui.chat.ChatController;
+import com.colibri.common.client.Client;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -59,7 +59,8 @@ public class ContactsController implements Controller {
             "   -fx-background-radius: 20 20 20 20;";
 
     private String oldNick;
-    @FXML private TextField tfNick;
+    @FXML
+    private TextField tfNick;
 
     @FXML private ListView<Client> listView;
     private ObservableList<Client> data;

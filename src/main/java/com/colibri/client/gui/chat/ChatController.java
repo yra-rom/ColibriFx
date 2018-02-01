@@ -1,11 +1,12 @@
-package gui.chat;
+package com.colibri.client.gui.chat;
 
-import client.Client;
-import client.ClientThread;
-import constants.Activity;
-import constants.SendKeys;
-import gui.Controller;
-import gui.contacts.ContactsController;
+import com.colibri.client.ClientThread;
+import com.colibri.client.constants.Activity;
+import com.colibri.client.gui.Controller;
+import com.colibri.client.gui.contacts.ContactsController;
+import com.colibri.common.client.Client;
+import com.colibri.common.constants.SendKeys;
+import com.colibri.common.dto.Message;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -14,7 +15,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,7 +30,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import lib.Message;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -39,24 +43,32 @@ import java.util.concurrent.FutureTask;
 public class ChatController implements Controller {
     private ClientThread thread = ClientThread.getInstance();
 
-    @FXML private TextArea taMessage;
+    @FXML
+    private TextArea taMessage;
 
-    @FXML private Label lNick;
+    @FXML
+    private Label lNick;
 
-    @FXML private ImageView ivCall;
-    @FXML private ImageView ivVideo;
-    @FXML private ImageView ivFile;
-    @FXML private ImageView ivSend;
+    @FXML
+    private ImageView ivCall;
+    @FXML
+    private ImageView ivVideo;
+    @FXML
+    private ImageView ivFile;
+    @FXML
+    private ImageView ivSend;
 
-    @FXML private ListView<Message> lvChats;
+    @FXML
+    private ListView<Message> lvChats;
     private ObservableList<Message> data;
 
     private Client friend;
 
-    @FXML public void initialize() {
+    @FXML
+    public void initialize() {
         initImageListeners();
 
-        if(! ContactsController.stack.isEmpty()){
+        if (!ContactsController.stack.isEmpty()) {
             friend = ContactsController.stack.pop();
             lNick.setText(friend.getNick());
             registerChat(friend.getEmail());
@@ -71,7 +83,7 @@ public class ChatController implements Controller {
     private void initImageListeners() {
         ImageView ivs[] = {ivCall, ivVideo, ivFile, ivSend};
 
-        for(ImageView iv : ivs) {
+        for (ImageView iv : ivs) {
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setBrightness(0.0);
 
@@ -118,7 +130,7 @@ public class ChatController implements Controller {
         }
     }
 
-    public void receiveMessage(Message message){
+    public void receiveMessage(Message message) {
         Platform.runLater(() -> {
             data.add(message);
             lvChats.scrollTo(lvChats.getItems().size());
@@ -127,45 +139,47 @@ public class ChatController implements Controller {
 
     private void sendMessage() {
         String text = taMessage.getText();
-        if(text.equals("")){
+        if (text.equals("")) {
             return;
         }
         String time = new SimpleDateFormat("H:mm:ss").format(new Date().getTime());
 
-        Message message = new Message.MessageBuilder().
-                text(text).
-                from(ClientThread.getInstance().getClient().getEmail()).
-                time(time).
-                to(friend.getEmail()).build();
+        Message message = Message.builder()
+                .text(text)
+                .from(ClientThread.getInstance().getClient().getEmail())
+                .time(time)
+                .to(friend.getEmail()).build();
 
         addYourMessage(message);
         taMessage.setText("");
         thread.sendMessage(message);
     }
 
-    private void addYourMessage(Message message){
-        Message messageMy = new Message.MessageBuilder().
-                from("You").
-                to(message.getTo()).
-                time(message.getTime()).
-                text(message.getText()).build();
+    private void addYourMessage(Message message) {
+        Message messageMy = Message.builder()
+                .from("You")
+                .to(message.getTo())
+                .time(message.getTime())
+                .text(message.getText())
+                .build();
         receiveMessage(messageMy);
     }
 
-    private void registerChat(String email){
+    private void registerChat(String email) {
         ContactsController.chats.put(email, this);
     }
 
     public void ivFileClickAction(MouseEvent mouseEvent) {
-        if(mouseEvent.getButton() == MouseButton.PRIMARY) {
+        if (mouseEvent.getButton() == MouseButton.PRIMARY) {
             FileChooser chooser = new FileChooser();
             File file = chooser.showOpenDialog(null);
-            if(file != null) {
+            if (file != null) {
                 thread.sendFile(file, friend);
-                Message message = new Message.MessageBuilder().
-                        from("You").
-                        text("Sent file " + file.getName()).
-                        time(getCurrentTime()).build();
+                Message message = Message.builder()
+                        .from("You")
+                        .text("Sent file " + file.getName())
+                        .time(getCurrentTime())
+                        .build();
 
                 addYourMessage(message);
             }
@@ -174,7 +188,7 @@ public class ChatController implements Controller {
 
     public File getConfirmation(HashMap<String, Object> map) {
 
-        if(SendKeys.FILE_START.equals(map.get(SendKeys.TITLE))) {
+        if (SendKeys.FILE_START.equals(map.get(SendKeys.TITLE))) {
             String email = (String) map.get(SendKeys.FROM);
             String fileName = (String) map.get(SendKeys.FILE_NAME);
 
@@ -199,7 +213,7 @@ public class ChatController implements Controller {
                         String[] splited = fileName.split("\\.");
                         String format = "." + splited[splited.length - 1];
 
-                        chooser.setInitialFileName(fileName +  format);
+                        chooser.setInitialFileName(fileName + format);
 
                         chooser.getExtensionFilters().addAll(
                                 new FileChooser.ExtensionFilter("Text Files", "*.txt"),
@@ -223,10 +237,11 @@ public class ChatController implements Controller {
                 e.printStackTrace();
             }
 
-            Message message = new Message.MessageBuilder().
-                    from((String) map.get(SendKeys.FROM)).
-                    text((file == null ? "Rejected " : "Confirmed ") + " file " + (String) map.get(SendKeys.FILE_NAME) ).
-                    time(new SimpleDateFormat("H:mm:ss").format(new Date().getTime())).build();
+            Message message = Message.builder()
+                    .from((String) map.get(SendKeys.FROM))
+                    .text((file == null ? "Rejected " : "Confirmed ") + " file " + (String) map.get(SendKeys.FILE_NAME))
+                    .time(new SimpleDateFormat("H:mm:ss").format(new Date().getTime()))
+                    .build();
 
             receiveMessage(message);
 
@@ -237,7 +252,7 @@ public class ChatController implements Controller {
         return null;
     }
 
-    private String getCurrentTime(){
+    private String getCurrentTime() {
         return new SimpleDateFormat("H:mm:ss").format(new Date().getTime());
     }
 }

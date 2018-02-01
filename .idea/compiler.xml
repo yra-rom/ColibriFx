@@ -5,6 +5,8 @@
       <profile default="true" name="Default" enabled="true" />
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="colibri-desktop_main" target="1.8" />
+      <module name="colibri-desktop_test" target="1.8" />
       <module name="ColibriFx_main" target="1.8" />
       <module name="ColibriFx_test" target="1.8" />
     </bytecodeTargetLevel>

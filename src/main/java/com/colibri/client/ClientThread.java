@@ -1,14 +1,15 @@
-package client;
+package com.colibri.client;
 
-import constants.Authentication;
-import constants.SendKeys;
-import constants.ServerInfo;
-import gui.Controller;
-import gui.chat.ChatController;
-import gui.contacts.ContactsController;
-import lib.FilePart;
-import lib.Message;
-import logger.Log;
+import com.colibri.client.constants.ServerInfo;
+import com.colibri.client.gui.Controller;
+import com.colibri.client.gui.chat.ChatController;
+import com.colibri.client.gui.contacts.ContactsController;
+import com.colibri.common.client.Client;
+import com.colibri.common.constants.Authentication;
+import com.colibri.common.constants.SendKeys;
+import com.colibri.common.dto.FilePart;
+import com.colibri.common.dto.Message;
+import com.colibri.common.logger.Log;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * Singleton
  */
 public class ClientThread extends Thread {
+    
     private static final int TIMEOUT_FRIEND_REQUEST_SECONDS = 2;
     private static final int TIMEOUT_WAIT_FOR_AUTHENTICATION_MILLIS = 25;
     private final String TAG = this.getClass().getSimpleName();
@@ -251,13 +253,13 @@ public class ClientThread extends Thread {
             int partCounter = 0;
 
             while (length != -1){
-                FilePart part = new FilePart.FilePartBuilder().
-                        part(partCounter++).
-                        fileName(fileName).
-                        bytes(Arrays.copyOf(bytes, length)).
-                        length(length).
-                        to(to).
-                        build();
+                FilePart part = FilePart.builder()
+                        .part(partCounter++)
+                        .fileName(fileName)
+                        .bytes(Arrays.copyOf(bytes, length))
+                        .length(length)
+                        .to(to)
+                        .build();
 
                 outcome.add(part);
                 length = fis.read(bytes);
@@ -277,7 +279,7 @@ public class ClientThread extends Thread {
     }
 
     private void answerRequests() {
-        while (client == null || !client.isConfirmed()) {
+        while (client == null || !client.getConfirmed()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(TIMEOUT_WAIT_FOR_AUTHENTICATION_MILLIS);
             } catch (InterruptedException e) {
@@ -286,7 +288,7 @@ public class ClientThread extends Thread {
         }
 
         while (!isInterrupted() && socket.isConnected()
-                && client != null && client.isConfirmed()) {
+                && client != null && client.getConfirmed()) {
             Object o = getNextRequest();
             if (o instanceof Message) {
                 Message message = (Message) o;
@@ -311,7 +313,7 @@ public class ClientThread extends Thread {
                         ((ContactsController) controller).addFriends(clients);
                     }
 
-                    Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + " received " + clients.size() + " friends.");
+                    Log.d(client.getEmail(), new SimpleDateFormat("H:mm:ss").format(new Date().getTime()) + "com/colibri/client/received " + clients.size() + " friends.");
                 }
                 else{
                     Log.d(TAG, "Unknown map " + map.get(SendKeys.TITLE));
@@ -345,7 +347,7 @@ public class ClientThread extends Thread {
             String to = (String) mapInfo.get(SendKeys.TO);
             String fromTo = from + "[-]" + to;
 
-            String DIR_PATH = "src/received/" + fromTo;
+            String DIR_PATH = "src/com.colibri.client.received/" + fromTo;
 
             File dir = new File(DIR_PATH);
             if(!dir.exists()){
@@ -376,7 +378,7 @@ public class ClientThread extends Thread {
 
             } catch ( IOException e) {
                 e.printStackTrace();
-                Log.d(client.getEmail(), "File received.");
+                Log.d(client.getEmail(), "File com.colibri.client.received.");
             }
 
 
